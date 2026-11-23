@@ -656,7 +656,8 @@ html,body{overflow-x:clip}
     <h3 id="fb-title">Idee, Wunsch oder Fehler?</h3>
     <p style="color:var(--muted);font-size:14px">Sie testen eine frühe Version. Schreiben Sie kurz, was fehlt oder stört. Mit Ihrem Namen können wir direkt nachfragen.</p>
     <label>Ihr Name<input id="fb-name" required placeholder="Vor- und Nachname"></label>
-    <label>Art<select id="fb-kind"><option>Idee / Verbesserung</option><option>Fehler</option><option>Frage</option></select></label>
+    <label>Art<select id="fb-kind"><option value="idee">Idee / Verbesserung</option><option value="fehler">Fehler</option><option value="frage">Frage</option><option value="lob">Lob</option></select></label>
+    <input type="text" id="fb-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
     <label>Ihre Nachricht<textarea id="fb-text" rows="4" required></textarea></label>
     <div class="row"><button type="button" class="btn btn-ghost" data-close="fb-ov">Schließen</button><button type="submit" class="btn btn-green">Absenden</button></div>
   </form>
@@ -1016,9 +1017,19 @@ document.getElementById('new-form').addEventListener('submit',e=>{
     chat:[{f:'sys',t:`Rad angenommen um ${now()}`,at:now()},{f:'shop',t:'Hallo, Ihr Rad ist angenommen. Hier sehen Sie jederzeit den Stand.',at:now()}]});
   state.sel=o.id;e.target.reset();photoData=[];document.getElementById('f-prev').innerHTML='';closeOv('new-ov');renderAll();toast(`Link per SMS an ${o.phone} (in der Demo nur simuliert)`);
 });
-document.getElementById('fb-form').addEventListener('submit',e=>{
-  e.preventDefault();state.feedback.push({name:document.getElementById('fb-name').value,kind:document.getElementById('fb-kind').value,text:document.getElementById('fb-text').value,at:new Date().toISOString()});
-  e.target.reset();closeOv('fb-ov');toast('Danke! In der Demo wird das noch nicht verschickt.');
+document.getElementById('fb-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const f=e.target, btn=f.querySelector('button[type=submit]'), v=id=>document.getElementById(id).value;
+  const payload={action:'public_feedback',app:'bikeshop-haar',name:v('fb-name'),kind:v('fb-kind'),text:v('fb-text'),website:v('fb-website'),
+    context:{seite:location.hash||'#website',bereich:document.querySelector('.view.on')?.id?.replace('view-','')||'',geraet:innerWidth<760?'Handy':innerWidth<1100?'Tablet':'Computer'}};
+  btn.disabled=true; btn.textContent='Wird gesendet …';
+  try{
+    const r=await fetch('https://fibyoicwelxburywcvqj.supabase.co/functions/v1/pilot',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error||'Fehler');
+    f.reset();closeOv('fb-ov');toast('Danke! Ihre Rückmeldung ist angekommen.');
+  }catch(err){toast('Senden hat nicht geklappt'+(err.message&&err.message!=='Failed to fetch'?': '+err.message:'')+'. Bitte später noch einmal versuchen.')}
+  finally{btn.disabled=false;btn.textContent='Absenden'}
 });
 
 
