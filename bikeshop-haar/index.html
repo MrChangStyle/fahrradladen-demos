@@ -395,6 +395,65 @@ a:hover .more::after{margin-left:4px}
 .toast.show{opacity:1}
 .foot-note{max-width:1240px;margin:0 auto 80px;padding:0 24px;color:var(--muted);font-size:12px}
 
+
+/* ============ HANDY & TABLET ============ */
+.seo-grid>*{min-width:0}.seo-t td,.serp-url,.seo-src{overflow-wrap:anywhere}.seo-t{table-layout:fixed}
+.contact>*,.two>*,.split>*,.flag>*{min-width:0}
+.site-form input,.site-form select,.site-form textarea{width:100%;min-width:0}
+.ki-stage>*,.stage>*{min-width:0}
+html,body{overflow-x:clip}
+.fb-short{display:none}
+@media (max-width:760px){.fb-long{display:none}.fb-short{display:inline}}
+.menu-btn{display:none;width:46px;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);flex-direction:column;justify-content:center;align-items:center;gap:5px;margin-left:auto}
+.menu-btn span{display:block;width:20px;height:2px;border-radius:2px;background:var(--ink);transition:transform .25s,opacity .2s}
+.site-nav.open .menu-btn span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.site-nav.open .menu-btn span:nth-child(2){opacity:0}
+.site-nav.open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media (max-width:1060px){
+  .menu-btn{display:flex}
+  .site-nav{padding:10px 20px;gap:10px}
+  .site-nav .links,.site-nav .cta{display:none!important}
+  .site-nav.open .links{display:flex!important;order:3;width:100%;flex-direction:column;gap:0;overflow:visible;white-space:normal;padding:4px 0 0}
+  .site-nav.open .links a{padding:13px 4px;border-top:1px solid var(--line);font-size:17px}
+  .site-nav.open .links a::after{display:none}
+  .site-nav.open .cta{display:flex!important;order:4;width:100%;margin:0 0 8px}
+  .site-nav.open .cta>*{flex:1;padding:13px}
+  .demobar .note{display:none}
+  .status-row button,.quick button,.sit button,.templates button,.chip-link{min-height:40px}
+  .hero-inner{padding-top:36px!important}
+}
+@media (max-width:760px){
+  .demobar{position:relative;padding:8px 12px;gap:6px}
+  .demobar .lbl{width:100%;font-size:10.5px;letter-spacing:.6px}
+  .demobar nav{width:100%;flex-wrap:nowrap}
+  .demobar a{flex:1;text-align:center;padding:7px 6px;font-size:13px}
+  .site-nav{top:0}
+  .logo b{font-size:16px}
+  .hero-copy h1{font-size:30px}
+  .hero-copy p{font-size:16px}
+  .hero-copy .row .btn{flex:1 1 100%}
+  .hero-inner{padding-bottom:150px!important;gap:20px}
+  .today{padding:14px 16px}
+  .today .open{font-size:16px}
+  .today .line{flex-direction:column;gap:0}
+  .wrap{padding-top:40px;padding-bottom:40px}
+  .wrap.ph{padding-top:28px;padding-bottom:28px}
+  .page-hero h1{font-size:27px}
+  .lead-big{font-size:16px}
+  .prices .p{font-size:14px}
+  .cta-band{padding:20px;border-radius:16px}
+  .cta-band .row{width:100%}.cta-band .row>*{flex:1}
+  input,select,textarea{font-size:16px!important}
+  .fb-btn{padding:9px 14px;font-size:13px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}
+  .phone{border-radius:30px;padding:6px}
+  .phone-screen{border-radius:24px;height:min(740px,calc(100svh - 40px))}
+  .ki-stage,.stage{gap:20px}
+  .kpi b{font-size:20px}
+  .spec th{width:42%}
+  .calc-out b{font-size:22px}
+  .seo-t th{width:44%}
+}
+
 @media (max-width:1060px){
   .stage,.ki-stage{grid-template-columns:1fr}
   .tabs{display:flex}
@@ -449,7 +508,7 @@ a:hover .more::after{margin-left:4px}
       <svg width="42" height="42" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#8fd3ec"/><path d="M4 30 L14 14 L19 21 L25 9 L40 30 Z" fill="#fff"/><path d="M1.5 28 H42.5 A21 21 0 0 1 1.5 28 Z" fill="#5fa82a"/><g fill="none" stroke="#1b1f1b" stroke-width="1.8"><circle cx="15" cy="24" r="4.5"/><circle cx="29" cy="24" r="4.5"/><path d="M15 24 L20 17 L27 17 L29 24 M20 17 L23 24 L27 17"/></g></svg>
       <b>BIKE <span>Shop</span> Haar</b>
     </a>
-    <nav class="links" aria-label="Homepage">
+    <nav class="links" id="site-menu" aria-label="Homepage">
       <a href="#werkstatt" data-nav="werkstatt">Werkstatt</a>
       <a href="#leistungen" data-nav="leistungen">Leistungen</a>
       <a href="#neuraeder-e-bikes" data-nav="neuraeder-e-bikes">Neuräder &amp; E-Bikes</a>
@@ -457,6 +516,7 @@ a:hover .more::after{margin-left:4px}
       <a href="#news" data-nav="news">News</a>
       <a href="#kontakt" data-nav="kontakt">Kontakt</a>
     </nav>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-menu" aria-label="Menü öffnen"><span></span><span></span><span></span></button>
     <div class="cta">
       <button type="button" class="btn btn-ghost" data-open="status-ov">Reparaturstatus</button>
       <a class="btn btn-green" href="#kontakt">Termin anfragen</a>
@@ -550,7 +610,7 @@ a:hover .more::after{margin-left:4px}
 
 <p class="foot-note">Demo-Entwurf für BikeShop Haar. Namen, Aufträge und Preise sind Beispiele. In der fertigen Lösung läuft der Kunden-Link per SMS oder E-Mail, die Telefon-KI über die bestehende Rufnummer.</p>
 
-<button type="button" class="fb-btn" data-open="fb-ov">Idee oder Fehler melden</button>
+<button type="button" class="fb-btn" data-open="fb-ov"><span class="fb-long">Idee oder Fehler melden</span><span class="fb-short">Feedback</span></button>
 
 <!-- Dialoge -->
 <div class="overlay" id="status-ov" role="dialog" aria-modal="true" aria-labelledby="st-title">
@@ -1525,7 +1585,7 @@ function startHero(){
   };
   heroRAF=requestAnimationFrame(loop);
 }
-const trailY=(X,W,H)=>H*.86+Math.sin(X*.011+1)*H*.025+Math.sin(X*.0037)*H*.03;
+const trailY=(X,W,H)=>H-62+Math.sin(X*.011+1)*10+Math.sin(X*.0037)*12;
 function scene(x,W,H,t){
   x.clearRect(0,0,W,H);
   /* Wolken */
@@ -1534,13 +1594,14 @@ function scene(x,W,H,t){
     x.beginPath();x.ellipse(cx,cy,46*s,14*s,0,0,7);x.ellipse(cx+28*s,cy-8*s,30*s,14*s,0,0,7);x.ellipse(cx-26*s,cy-4*s,24*s,11*s,0,0,7);x.fill()});
   /* Berge hinten (wie im Logo) */
   const p1=-mx*10;
-  x.fillStyle='#eef7fb';x.beginPath();x.moveTo(W*.36+p1,H*.8);[[.5,.42],[.56,.52],[.66,.26],[.78,.5],[.86,.4],[1.04,.8]].forEach(([a,b])=>x.lineTo(W*a+p1,H*b+my*4));x.closePath();x.fill();
-  x.fillStyle='#cfe3ec';x.beginPath();x.moveTo(W*.66+p1,H*.26+my*4);x.lineTo(W*.78+p1,H*.5+my*4);x.lineTo(W*.7+p1,H*.8);x.closePath();x.fill();
+  const ym=H-125,pk=Math.min(H*.6,330),M=b=>ym-pk*((.8-b)/.54);
+  x.fillStyle='#eef7fb';x.beginPath();x.moveTo(W*.36,ym);[[.5,.42],[.56,.52],[.66,.26],[.78,.5],[.86,.4],[1.04,.8]].forEach(([a,b])=>x.lineTo(W*a,M(b)));x.closePath();x.fill();
+  x.fillStyle='#cfe3ec';x.beginPath();x.moveTo(W*.66,M(.26));x.lineTo(W*.78,M(.5));x.lineTo(W*.7,ym);x.closePath();x.fill();
   /* Hügel Mitte mit Bäumen */
   const p2=-mx*20;
-  x.fillStyle='#7cc142';x.beginPath();x.moveTo(-40,H);for(let i=0;i<=24;i++){const X=W*i/24;x.lineTo(X+p2,H*(.74+Math.sin(i*.7+.5)*.03))}x.lineTo(W+40,H);x.fill();
-  const hillY=X=>H*(.74+Math.sin((X/W)*24*.7+.5)*.03);
-  [[.05,'laub',1],[.45,'laub',.8],[.55,'tanne',.75],[.93,'tanne',1.05]].forEach(([f,typ,k])=>tree(x,W*f,hillY(W*f)+6,Math.min(H*.2,140)*k,typ));
+  x.fillStyle='#7cc142';x.beginPath();x.moveTo(-40,H);for(let i=0;i<=24;i++){const X=W*i/24;x.lineTo(X,H-135+Math.sin(i*.7+.5)*14)}x.lineTo(W+40,H);x.fill();
+  const hillY=X=>H-135+Math.sin((X/W)*24*.7+.5)*14;
+  [[.05,'laub',1],[.45,'laub',.8],[.55,'tanne',.75],[.93,'tanne',1.05]].forEach(([f,typ,k])=>tree(x,W*f,hillY(W*f)+6,Math.min(110,Math.max(70,W*.1))*k,typ));
   /* Vordergrund und Trail */
   const p3=-mx*30;
   x.fillStyle='#5fa82a';x.beginPath();x.moveTo(0,H);for(let X=0;X<=W;X+=16)x.lineTo(X,trailY(X-p3,W,H)-10);x.lineTo(W,H);x.fill();
@@ -1601,6 +1662,13 @@ function observeReveal(){ if(!io) return; document.querySelectorAll('#site-main 
 function setBarH(){document.documentElement.style.setProperty('--dbh',document.querySelector('.demobar').offsetHeight+'px')}
 window.addEventListener('resize',setBarH);
 
+
+/* Mobiles Menü */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('#menu-btn'); const nav=document.querySelector('.site-nav');
+  if(b){const o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Menü schließen':'Menü öffnen');return}
+  if(e.target.closest('.site-nav a,.site-nav .cta button')){nav.classList.remove('open');document.getElementById('menu-btn').setAttribute('aria-expanded','false')}
+});
 setBarH(); renderAll(); route();
 </script>
 </body>
