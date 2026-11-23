@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf BikeShop Haar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Farben aus dem Logo von BikeShop Haar: Himmelblau, Wiesengrün, Schwarz, Schild-Rot */
+  --sky:#8fd3ec; --sky-soft:#e6f5fb; --sky-deep:#1d6b8a;
+  --green:#5fa82a; --green-dark:#3d7a17; --green-soft:#e8f4dd;
+  --ink:#1b1f1b; --muted:#5e6a5e; --line:#dde4da;
+  --paper:#f4f7f2; --card:#ffffff;
+  --red:#d42a2f; --amber:#e89b0c; --amber-soft:#fdf1d8;
+  --font-display:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --font-body:"Nunito Sans","Segoe UI",Arial,sans-serif;
+  /* Layout: Demo-Leiste oben, darunter drei Ansichten (Homepage, App, Telefon-KI) auf einem gemeinsamen Datenstand */
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+img{max-width:100%}
+
+/* Demo-Leiste */
+.demobar{position:sticky;top:0;z-index:25;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:8px 20px;background:var(--ink);color:#fff}
+.demobar .lbl{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#b9c4b9}
+.demobar nav{display:flex;gap:6px;flex-wrap:wrap}
+.demobar a{text-decoration:none;padding:6px 14px;border-radius:999px;font-weight:700;font-size:14px;font-family:var(--font-display);color:#fff;border:1px solid #3a423a}
+.demobar a[aria-current="page"]{background:var(--green);border-color:var(--green)}
+.demobar .note{margin-left:auto;font-size:12px;color:#b9c4b9}
+.view{display:none}
+.view.on{display:block}
+
+/* ============ WEBSITE ============ */
+.site-nav{display:flex;align-items:center;gap:20px;padding:14px 32px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo b{font-family:var(--font-display);font-weight:800;font-size:18px}
+.logo b span{color:var(--red)}
+.site-nav .links{display:flex;gap:18px;flex-wrap:wrap;font-weight:600;font-size:14px}
+.site-nav .links a{text-decoration:none}
+.site-nav .links a:hover{color:var(--green-dark)}
+.site-nav .cta{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-family:var(--font-display);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-lg{padding:13px 20px;font-size:15px;border-radius:12px}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-dark)}
+.btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-red{background:var(--card);border:1px solid var(--red);color:var(--red)}
+
+.hero-site{position:relative;background:linear-gradient(180deg,var(--sky) 0%,#d3effa 86%,var(--green) 86%,var(--green) 100%);overflow:hidden}
+.hero-site canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-inner{position:relative;max-width:1180px;margin:0 auto;padding:56px 32px 96px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:32px;align-items:center}
+.hero-copy h1{font-size:clamp(30px,4.2vw,48px);font-weight:800;line-height:1.08}
+.hero-copy p{margin-top:14px;font-size:18px;max-width:34em}
+.hero-copy .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.today{background:var(--card);border-radius:18px;padding:18px 20px;box-shadow:0 10px 30px rgba(27,31,27,.12);display:grid;gap:10px}
+.today .open{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:800;font-size:18px}
+.today .open i{width:12px;height:12px;border-radius:50%;background:var(--green)}
+.today .open.closed i{background:var(--red)}
+.today small{color:var(--muted)}
+.today .line{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-top:1px solid var(--line);padding-top:8px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:56px 32px}
+.wrap h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+.wrap .lead{color:var(--muted);margin-top:8px;max-width:60ch;font-size:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.svc .ico{width:42px;height:42px;border-radius:12px;background:var(--green-soft);display:grid;place-items:center}
+.svc h3{font-size:17px}
+.svc p{color:var(--muted);font-size:14px}
+.band{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start;margin-top:24px}
+.prices{background:var(--paper);border-radius:16px;padding:6px 18px}
+.prices .p{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.prices .p:last-child{border:0}
+.prices .p span:last-child{font-weight:700;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;font-weight:700;background:var(--amber-soft);color:#8a5a00;border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:middle}
+.flow{display:grid;gap:12px;counter-reset:f}
+.flow div{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start}
+.flow div::before{counter-increment:f;content:counter(f);width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800}
+.flow div.green::before{background:var(--green)}
+.flow b{display:block}
+.flow span{color:var(--muted);font-size:14px}
+.brands{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.brands span{font-family:var(--font-display);font-weight:700;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 16px}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.hours{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+.hours td{padding:6px 0;border-bottom:1px solid var(--line)}
+.hours td:last-child{text-align:right}
+.hours tr.now td{font-weight:700;color:var(--green-dark)}
+.map{margin-top:14px;border-radius:12px;background:repeating-linear-gradient(45deg,var(--sky-soft),var(--sky-soft) 10px,#fff 10px,#fff 20px);padding:22px;text-align:center;font-size:13px;color:var(--muted)}
+.site-form{display:grid;gap:10px}
+.site-form label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+.site-form input,.site-form select,.site-form textarea{border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-weight:400;color:var(--ink);background:var(--card)}
+.site-foot{background:var(--ink);color:#c9d2c9;font-size:14px}
+.site-foot .wrap{padding:28px 32px;display:flex;flex-wrap:wrap;gap:12px 28px}
+.site-foot a{color:#fff}
+
+/* ============ APP ============ */
+.intro{max-width:1240px;margin:20px auto 0;padding:0 24px;color:var(--muted);font-size:14px}
+.intro strong{color:var(--ink)}
+.tabs{display:none;gap:8px;max-width:1240px;margin:12px auto 0;padding:0 24px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);border-radius:10px;font-weight:700;font-family:var(--font-display)}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;max-width:1240px;margin:16px auto 40px;padding:0 24px;align-items:start}
+.device-label{font-family:var(--font-display);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.device-label .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.tablet{background:var(--ink);border-radius:28px;padding:14px}
+.tablet-screen{background:var(--paper);border-radius:16px;overflow:hidden;min-height:640px;display:flex;flex-direction:column}
+.w-head{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line)}
+.w-head h2{font-size:16px}
+.grow{flex:1}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:12px 16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-family:var(--font-display);font-size:22px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi.warn b{color:var(--amber)} .kpi.ok b{color:var(--green-dark)} .kpi.call b{color:var(--red)}
+.w-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:12px;padding:0 16px 16px;flex:1}
+.list{display:flex;flex-direction:column;gap:8px}
+.order{display:flex;gap:10px;align-items:stretch;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden}
+.order[aria-current="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.order .stripe{width:6px;flex:none}
+.order .o-main{padding:9px 10px 9px 0;flex:1;min-width:0;display:block}
+.order .o-top{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+.order .o-name{font-weight:700;font-size:14px;display:block}
+.order .o-bike{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.order .flags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.s-vorgemerkt{background:#f1ecfa;color:#5b3f99} .st-vorgemerkt{background:#9c84d1}
+.s-angenommen{background:#eef1ee;color:#4a554a} .st-angenommen{background:#a9b3a9}
+.s-diagnose{background:var(--sky-soft);color:var(--sky-deep)} .st-diagnose{background:var(--sky)}
+.s-freigabe{background:var(--amber-soft);color:#8a5a00} .st-freigabe{background:var(--amber)}
+.s-arbeit{background:var(--sky-soft);color:var(--sky-deep)} .st-arbeit{background:#3aa6d0}
+.s-fertig{background:var(--green-soft);color:var(--green-dark)} .st-fertig{background:var(--green)}
+.s-abgeholt{background:#eef1ee;color:#6b746b} .st-abgeholt{background:#d6dbd6}
+.chip.call{background:#fde4e4;color:var(--red)}
+.chip.msg{background:var(--ink);color:#fff}
+.chip.src{background:#f1ecfa;color:#5b3f99}
+.detail{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.d-head{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
+.d-head h3{font-size:19px}
+.d-head .meta{color:var(--muted);font-size:13px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.fact{background:var(--paper);border-radius:10px;padding:8px 10px}
+.fact small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.fact span{font-weight:700;font-variant-numeric:tabular-nums}
+.sec-title{font-family:var(--font-display);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.status-row{display:flex;flex-wrap:wrap;gap:6px}
+.status-row button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.status-row button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.callback-box{display:flex;gap:10px;align-items:center;background:#fde4e4;border-radius:10px;padding:10px 12px;font-size:14px}
+.callback-box b{color:var(--red)}
+.ask{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:6px}
+.ask input{border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.templates{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.templates button{font-size:12px;border:1px dashed var(--line);background:var(--paper);border-radius:8px;padding:4px 8px}
+.chat{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;padding:8px;background:var(--paper);border-radius:12px}
+.bubble{max-width:82%;padding:7px 10px;border-radius:12px;font-size:14px}
+.bubble time{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+.bubble.shop{background:var(--card);border:1px solid var(--line);align-self:flex-start}
+.bubble.kunde{background:var(--green-soft);align-self:flex-end}
+.bubble.sys{align-self:center;background:transparent;color:var(--muted);font-size:12px;text-align:center;max-width:100%}
+.me-shop .bubble.shop{align-self:flex-end;background:var(--green-soft);border:0}
+.me-shop .bubble.kunde{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
+.send{display:flex;gap:6px;margin-top:6px}
+.send input{flex:1;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .full{grid-column:1/-1}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.form input,.form select,.form textarea{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:400;color:var(--ink);background:var(--card)}
+.checks{display:flex;flex-wrap:wrap;gap:6px}
+.checks label{flex-direction:row;align-items:center;gap:6px;background:var(--paper);border-radius:8px;padding:6px 10px;font-weight:600;color:var(--ink)}
+.photos{display:flex;gap:6px;flex-wrap:wrap}
+.photos img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.phone{width:100%;max-width:380px;background:var(--ink);border-radius:44px;padding:12px;position:sticky;top:64px}
+.phone-screen{background:var(--card);border-radius:34px;overflow:hidden;height:740px;display:flex;flex-direction:column}
+.notch{height:26px;display:flex;justify-content:center;align-items:center;background:var(--card)}
+.notch i{width:90px;height:20px;background:var(--ink);border-radius:999px}
+.p-head{display:flex;align-items:center;gap:10px;padding:8px 16px 12px;border-bottom:1px solid var(--line)}
+.p-head b{font-family:var(--font-display);font-size:15px}
+.p-head small{display:block;color:var(--muted);font-size:12px}
+.p-body{flex:1;overflow-y:auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.hero{border-radius:18px;padding:16px}
+.hero h3{font-size:20px;margin-bottom:4px}
+.hero p{font-size:14px}
+.hero.h-fertig{background:var(--green);color:#fff}
+.hero.h-freigabe{background:var(--amber-soft);border:2px solid var(--amber)}
+.hero.h-normal{background:var(--sky-soft)}
+.hero.h-abgeholt{background:#eef1ee}
+.big-check{font-size:34px;line-height:1}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.step{text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+.step i{display:block;height:8px;border-radius:999px;background:var(--line);margin-bottom:4px}
+.step.done i{background:var(--green)} .step.now i{background:var(--amber)}
+.step.done,.step.now{color:var(--ink)}
+.approve{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.approve .price{font-family:var(--font-display);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.approve .row{display:flex;gap:6px;flex-wrap:wrap}
+.approve .row .btn{flex:1}
+.cb{display:flex;flex-direction:column;gap:6px;background:var(--paper);border-radius:14px;padding:12px}
+.cb select{border:1px solid var(--line);border-radius:10px;padding:8px}
+.cb .done{color:var(--red);font-weight:700;font-size:14px}
+.info-list{font-size:13px;color:var(--muted);display:grid;gap:2px}
+.info-list b{color:var(--ink)}
+.phone-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+
+/* ============ TELEFON-KI ============ */
+.ki-stage{display:grid;grid-template-columns:400px minmax(0,1fr);gap:28px;max-width:1240px;margin:16px auto 40px;padding:0 24px;align-items:start}
+.call-head{background:var(--ink);color:#fff;padding:18px 16px;text-align:center}
+.call-head b{font-family:var(--font-display);font-size:17px;display:block}
+.call-head small{color:#b9c4b9}
+.call-head .timer{font-variant-numeric:tabular-nums;margin-top:4px;font-size:13px;color:var(--sky)}
+.call-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--paper)}
+.say{max-width:86%;padding:9px 12px;border-radius:14px;font-size:14px}
+.say.ki{background:var(--card);border:1px solid var(--line);align-self:flex-start}
+.say.ki::before{content:"KI-Assistent";display:block;font-size:10px;font-weight:700;color:var(--sky-deep);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.say.me{background:var(--green-soft);align-self:flex-end}
+.say.end{align-self:center;background:transparent;color:var(--muted);font-size:12px}
+.quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0;background:var(--card);border-top:1px solid var(--line)}
+.quick button{border:1px solid var(--green);color:var(--green-dark);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700}
+.call-input{display:flex;gap:6px;padding:10px 12px 14px;background:var(--card)}
+.call-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-width:0}
+.ki-side{display:grid;gap:16px}
+.ki-side h3{font-size:17px;margin-bottom:8px}
+.sit{display:flex;flex-wrap:wrap;gap:6px}
+.sit button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.sit button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.logic{display:grid;gap:8px;font-size:14px}
+.logic .r{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.logic .r:last-child{border:0}
+.logic .r b{font-family:var(--font-display);font-size:13px}
+.log{display:grid;gap:6px;font-size:13px;max-height:260px;overflow:auto}
+.log div{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:6px 8px;background:var(--paper);border-radius:8px}
+.log time{color:var(--muted);font-variant-numeric:tabular-nums}
+.speak{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+
+
+/* ============ HOMEPAGE MEHRSEITIG ============ */
+.site-nav{position:sticky;top:var(--dbh,44px);z-index:22;background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+.site-nav .links a{position:relative;padding:4px 0}
+.site-nav .links a::after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:3px;border-radius:3px;background:var(--green);transition:right .25s}
+.site-nav .links a:hover::after,.site-nav .links a[aria-current="page"]::after{right:0}
+.site-nav .links a[aria-current="page"]{color:var(--green-dark)}
+.hero-site{background:linear-gradient(180deg,#8fd3ec 0%,#c9ecf8 70%,#e3f5fb 100%)}
+.hero-inner{padding-bottom:170px!important}
+.crumbs{background:var(--card);border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.crumbs .wrap-in{max-width:1180px;margin:0 auto;padding:8px 32px}
+.crumbs a{color:var(--green-dark);text-decoration:none}
+.page-hero{background:linear-gradient(120deg,var(--sky-soft),#fff 60%,var(--green-soft));border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.page-hero::after{content:"";position:absolute;right:-60px;bottom:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(95,168,42,.18),transparent 70%);animation:float 9s ease-in-out infinite alternate}
+.wrap.ph{padding-top:40px;padding-bottom:40px;position:relative;z-index:1}
+.page-hero h1{font-size:clamp(28px,3.6vw,42px);font-weight:800;line-height:1.1;max-width:22em}
+.kicker{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--green-dark);margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lead-big{font-size:18px;max-width:46em;margin-top:12px;color:#334033}
+.mt{margin-top:16px}
+.h3{font-size:17px;margin-bottom:10px}
+.small-note{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:20px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.svc-link{text-decoration:none;color:inherit}
+.svc{transition:transform .2s ease,box-shadow .2s ease;will-change:transform}
+.svc-link:hover,.tilting{box-shadow:0 16px 34px rgba(27,31,27,.12)}
+.more{font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--green-dark);margin-top:auto}
+.more::after{content:" →";transition:margin .2s}
+a:hover .more::after{margin-left:4px}
+.link-arrow{font-weight:700;color:var(--green-dark);text-decoration:none}
+.link-arrow::after{content:" →"}
+.checklist{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.checklist li{padding-left:28px;position:relative}
+.checklist li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;background:var(--green-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233d7a17' stroke-width='3'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat}
+.faq{display:grid;gap:12px;margin-top:20px}
+.faq>div{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:14px 16px}
+.faq h3{font-size:16px;margin-bottom:4px}
+.faq p{color:#3c473c}
+.cta-band{max-width:1180px;margin:0 auto 48px;padding:24px 28px;border-radius:20px;background:var(--ink);color:#fff;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.cta-band::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(143,211,236,.18) 50%,transparent 70%);background-size:250% 100%;animation:sheen 6s linear infinite}
+.cta-band>*{position:relative}
+.cta-band b{font-family:var(--font-display);font-size:20px;display:block}
+.cta-band span{color:#c9d2c9;font-size:14px}
+.cta-band .btn-ghost{background:transparent;color:#fff;border-color:#4a544a}
+.pkgs{align-items:stretch}
+.pkg{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:transform .2s,box-shadow .2s}
+.pkg.hl{border:2px solid var(--green);box-shadow:0 12px 30px rgba(95,168,42,.18)}
+.pkg small{color:var(--muted);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.6px}
+.pp{font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--green-dark)}
+.bike-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
+.bike-card{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
+.bike-card small{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-size:11px}
+.bike-card h3{font-size:18px}
+.bike-card p{color:var(--muted);font-size:14px}
+.spec-line{font-size:13px;color:var(--ink)!important;font-weight:600}
+.bike-fig{width:100%;height:auto;background:linear-gradient(180deg,var(--sky-soft),#fff);border-radius:12px}
+.bike-fig .spin{transition:transform .6s}
+.bike-card:hover .spin,.brand-row:hover .spin{animation:spin 1s linear infinite}
+.brand-list{display:grid;gap:12px;margin-top:20px}
+.brand-row{display:grid;grid-template-columns:130px 150px 1fr auto;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
+.brand-row .bike-fig{width:150px}
+.b-name{font-family:var(--font-display);font-weight:800;font-size:22px;border-left:5px solid var(--bc);padding-left:10px}
+.b-body{display:flex;flex-direction:column;gap:2px}
+.b-body span{color:var(--muted);font-size:14px}
+.b-price{font-weight:700;white-space:nowrap}
+.flag{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:start}
+.flag-fig{position:sticky;top:calc(var(--dbh,44px) + 90px)}
+.flag-fig{background:radial-gradient(circle at 50% 60%,color-mix(in srgb,var(--bc) 18%,#fff),#fff 70%);border-radius:24px;padding:24px;text-align:center}
+.flag-fig .bike-fig.big{background:transparent;animation:bob 3s ease-in-out infinite}
+.flag-fig .spin{animation:spin 1.6s linear infinite}
+.flag-fig small{color:var(--muted);font-size:12px}
+.flag h2{font-size:clamp(24px,3vw,34px)}
+.spec{width:100%;border-collapse:collapse;margin:14px 0 6px;font-size:14px}
+.spec th{text-align:left;color:var(--muted);font-weight:600;padding:8px 12px 8px 0;width:38%;vertical-align:top;border-bottom:1px solid var(--line)}
+.spec td{padding:8px 0;border-bottom:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-link{text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px;transition:background .2s,border-color .2s}
+.chip-link:hover,.chip-link.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.calc{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:end;margin-top:16px;background:var(--paper);border-radius:16px;padding:16px}
+.calc label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+.calc input,.calc select{border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-weight:400;color:var(--ink);background:var(--card)}
+.calc-out small{display:block;color:var(--muted);font-size:12px}
+.calc-out b{font-family:var(--font-display);font-size:26px;color:var(--green-dark);font-variant-numeric:tabular-nums}
+/* News */
+.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
+.news-card{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s;border-top:5px solid var(--sky)}
+.news-card h3{font-size:17px}
+.news-card p{color:var(--muted);font-size:14px}
+.news-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.cat-pill{background:var(--green-soft);color:var(--green-dark);border-radius:999px;padding:2px 10px;font-weight:700;font-size:11px;text-transform:none;letter-spacing:0}
+.article{max-width:760px}
+.article h2{font-size:22px;margin:24px 0 8px}
+.article p{font-size:16.5px;line-height:1.65}
+.related{margin:28px 0 12px;display:grid;gap:8px}
+.demo-band{background:#eef3f7}
+.prompt{white-space:pre-wrap;background:var(--ink);color:#e6efe6;border-radius:14px;padding:16px;font-size:13px;line-height:1.5;max-height:360px;overflow:auto;margin:10px 0 12px}
+/* SEO-Box */
+.seo-box{background:#eef3f7;border-top:3px dashed #9fb7c6}
+.seo-in{padding-top:24px;padding-bottom:24px}
+.seo-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.seo-head b{font-family:var(--font-display);font-size:16px}
+.seo-head span{font-size:12px;font-weight:700;background:#dbe7ef;color:#3b5566;border-radius:999px;padding:3px 10px}
+.seo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.serp{background:#fff;border-radius:14px;padding:16px;border:1px solid #d6e1e8;font-family:Arial,sans-serif}
+.serp small{display:block;color:#6b7c88;font-size:11px;margin-bottom:8px;font-family:var(--font-body)}
+.serp-url{font-size:13px;color:#202124}
+.serp-title{font-size:19px;color:#1a0dab;margin:2px 0 4px;line-height:1.3}
+.serp-desc{font-size:14px;color:#4d5156;line-height:1.5}
+.seo-t{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:14px;overflow:hidden}
+.seo-t th{text-align:left;color:#5b6b76;font-weight:600;padding:7px 10px;width:36%;border-bottom:1px solid #e3eaef}
+.seo-t td{padding:7px 10px;border-bottom:1px solid #e3eaef}
+.ok{color:var(--green-dark);font-weight:700}.warn{color:#b26a00;font-weight:700}
+.seo-src{font-size:12.5px;color:#4b5c67;margin-top:10px}
+.seo-src a{color:#1d6b8a}
+/* Footer-Sitemap */
+.foot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;max-width:1180px;margin:0 auto;padding:32px}
+.foot-grid h4{color:#fff;font-size:14px;margin-bottom:8px}
+.foot-grid a{display:block;color:#c9d2c9;text-decoration:none;font-size:14px;padding:2px 0}
+.foot-grid a:hover{color:#fff}
+/* Bewegung */
+#site-main>*{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+#site-main>*:nth-child(2){animation-delay:.06s}#site-main>*:nth-child(3){animation-delay:.12s}
+.rv{transform:translateY(16px);opacity:.75;transition:transform .6s cubic-bezier(.2,.7,.2,1) var(--d,0ms),opacity .6s var(--d,0ms)}
+.rv.in{transform:none;opacity:1}
+.rv.tilting{transition:transform .12s}
+@keyframes rise{from{opacity:.01;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-1deg)}}
+@keyframes float{to{transform:translate(-40px,-30px) scale(1.1)}}
+@keyframes sheen{from{background-position:100% 0}to{background-position:-150% 0}}
+
+/* Allgemein */
+.fb-btn{position:fixed;right:18px;bottom:18px;z-index:20;background:var(--red);color:#fff;border:0;border-radius:999px;padding:12px 18px;font-weight:700;font-family:var(--font-display);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.overlay{position:fixed;inset:0;background:rgba(20,24,20,.45);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:18px;padding:20px;width:100%;max-width:460px;display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow:auto}
+.modal h3{font-size:18px}
+.modal label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+.modal input,.modal textarea,.modal select{border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-weight:400;color:var(--ink)}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.status-result{border-radius:14px;padding:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.foot-note{max-width:1240px;margin:0 auto 80px;padding:0 24px;color:var(--muted);font-size:12px}
+
+@media (max-width:1060px){
+  .stage,.ki-stage{grid-template-columns:1fr}
+  .tabs{display:flex}
+  body[data-dev="kunde"] .col-werkstatt{display:none}
+  body[data-dev="werkstatt"] .col-kunde{display:none}
+  .phone{margin:0 auto;position:static}
+  .hero-inner,.split,.contact{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr 1fr}
+  .bike-grid,.news-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .w-body{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .form{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .tablet{padding:6px;border-radius:18px}
+  .site-nav,.hero-inner,.wrap,.site-foot .wrap{padding-left:16px;padding-right:16px}
+  .site-nav .cta{display:none}
+  .flag-fig{position:static}
+  .site-nav .links{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;white-space:nowrap;padding-bottom:4px}
+  .two,.flag,.seo-grid,.calc{grid-template-columns:1fr}
+  .bike-grid,.news-grid,.grid2{grid-template-columns:1fr}
+  .brand-row{grid-template-columns:1fr 110px}.brand-row .b-body,.brand-row .b-price{grid-column:1/-1}.brand-row .bike-fig{width:110px}
+  .foot-grid{grid-template-columns:1fr 1fr;padding:24px 16px}
+  .crumbs .wrap-in{padding:8px 16px}
+  .cta-band{margin:0 16px 32px}
+  .intro,.stage,.ki-stage,.tabs,.foot-note{padding-left:16px;padding-right:16px}
+  .ask{grid-template-columns:1fr 80px}
+  .ask .btn{grid-column:1/-1}
+  .logic .r{grid-template-columns:1fr}
+  .demobar .note{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body data-dev="werkstatt">
+
+<div class="demobar">
+  <span class="lbl">Entwurf · nicht die offizielle Website von BikeShop Haar</span>
+  <nav aria-label="Demo-Bereiche">
+    <a href="#website" data-v="website">Homepage</a>
+    <a href="#app" data-v="app">Reparatur-App</a>
+    <a href="#telefon-ki" data-v="telefon-ki">Telefon-KI</a>
+  </nav>
+  <span class="note">Alle drei Bereiche teilen denselben Datenstand · Beispieldaten</span>
+</div>
+
+<!-- ===================== WEBSITE ===================== -->
+<section class="view" id="view-website" aria-label="Neue Homepage">
+  <header class="site-nav">
+    <a class="logo" href="#website">
+      <svg width="42" height="42" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#8fd3ec"/><path d="M4 30 L14 14 L19 21 L25 9 L40 30 Z" fill="#fff"/><path d="M1.5 28 H42.5 A21 21 0 0 1 1.5 28 Z" fill="#5fa82a"/><g fill="none" stroke="#1b1f1b" stroke-width="1.8"><circle cx="15" cy="24" r="4.5"/><circle cx="29" cy="24" r="4.5"/><path d="M15 24 L20 17 L27 17 L29 24 M20 17 L23 24 L27 17"/></g></svg>
+      <b>BIKE <span>Shop</span> Haar</b>
+    </a>
+    <nav class="links" aria-label="Homepage">
+      <a href="#werkstatt" data-nav="werkstatt">Werkstatt</a>
+      <a href="#leistungen" data-nav="leistungen">Leistungen</a>
+      <a href="#neuraeder-e-bikes" data-nav="neuraeder-e-bikes">Neuräder &amp; E-Bikes</a>
+      <a href="#marken" data-nav="marken">Marken</a>
+      <a href="#news" data-nav="news">News</a>
+      <a href="#kontakt" data-nav="kontakt">Kontakt</a>
+    </nav>
+    <div class="cta">
+      <button type="button" class="btn btn-ghost" data-open="status-ov">Reparaturstatus</button>
+      <a class="btn btn-green" href="#kontakt">Termin anfragen</a>
+    </div>
+  </header>
+  <main id="site-main"></main>
+  <aside class="seo-box" id="seo-box" aria-label="SEO-Ansicht der Demo"></aside>
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div><h4>Werkstatt</h4><a href="#werkstatt">Werkstatt &amp; Preise</a><a href="#inspektion">Inspektion</a><a href="#e-bike-service">E-Bike-Service</a><a href="#hol-und-bringservice">Hol- und Bringservice</a></div>
+      <div><h4>Kaufen</h4><a href="#neuraeder-e-bikes">Neuräder &amp; E-Bikes</a><a href="#finanzierung">Finanzierung</a><a href="#schutzbrief">Fahrrad-Schutzbrief</a><a href="#leistungen">Alle Leistungen</a></div>
+      <div><h4>Marken</h4><a href="#marke-besv">BESV</a><a href="#marke-victoria">Victoria</a><a href="#marke-kettler">Kettler</a><a href="#marke-haibike">Haibike</a><a href="#marke-winora">Winora</a><a href="#marke-bbf">BBF</a></div>
+      <div><h4>News &amp; Kontakt</h4><a href="#news-e-bike-technik">E-Bike-Technik</a><a href="#news-werkstatt-tipps">Werkstatt-Tipps</a><a href="#news-neuheiten">Neuheiten 2026</a><a href="#kontakt">Kontakt &amp; Anfahrt</a></div>
+    </div>
+    <div class="wrap" style="padding-top:0"><span><b style="color:#fff">BikeShop Haar</b> · Inh. Waldemar Klasman · Münchener Str. 11 · 85540 Haar · 089 46 55 99</span> <a href="#kontakt">Impressum</a> <a href="#kontakt">Datenschutz</a></div>
+  </footer>
+</section>
+
+<!-- ===================== APP ===================== -->
+<section class="view" id="view-app" aria-label="Reparatur-App">
+  <p class="intro"><strong>So funktioniert die Demo:</strong> Links arbeitet die Werkstatt am Tablet, rechts sieht der Kunde sein Rad auf dem Handy. Setzen Sie links den Status, stellen Sie eine Rückfrage mit Preis oder geben Sie rechts als Kunde frei. Aufträge von der Homepage und von der Telefon-KI erscheinen hier automatisch.</p>
+  <div class="tabs">
+    <button type="button" id="dev-werkstatt" aria-pressed="true">Werkstatt-Tablet</button>
+    <button type="button" id="dev-kunde" aria-pressed="false">Kundenhandy</button>
+  </div>
+  <div class="stage">
+    <section class="col-werkstatt" aria-label="Werkstatt-Ansicht">
+      <div class="device-label"><span class="dot"></span>Werkstatt · Tablet an der Annahme</div>
+      <div class="tablet"><div class="tablet-screen">
+        <div class="w-head"><h2>Reparaturaufträge</h2><span class="grow"></span><button type="button" class="btn btn-green" data-open="new-ov">+ Neue Annahme</button></div>
+        <div class="kpis" id="kpis"></div>
+        <div class="w-body"><div class="list" id="list" role="list"></div><div class="detail" id="detail"></div></div>
+      </div></div>
+    </section>
+    <section class="col-kunde" aria-label="Kunden-Ansicht">
+      <div class="device-label"><span class="dot" style="background:var(--sky)"></span>Kunde · eigenes Handy</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="notch"><i></i></div>
+        <div class="p-head">
+          <svg width="32" height="32" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#8fd3ec"/><path d="M4 30 L14 14 L19 21 L25 9 L40 30 Z" fill="#fff"/><path d="M1.5 28 H42.5 A21 21 0 0 1 1.5 28 Z" fill="#5fa82a"/></svg>
+          <div><b>BikeShop Haar</b><small id="p-sub"></small></div>
+        </div>
+        <div class="p-body" id="phone"></div>
+      </div></div>
+      <p class="phone-hint">Das Handy zeigt den Auftrag, der links ausgewählt ist.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== TELEFON-KI ===================== -->
+<section class="view" id="view-telefon-ki" aria-label="Telefon-KI">
+  <p class="intro"><strong>Telefon-KI:</strong> Wenn der Laden zu ist oder gerade niemand ans Telefon kann, übernimmt der KI-Assistent. Er sagt offen, dass er eine KI ist, liest den Reparaturstand direkt aus der App, nimmt neue Aufträge auf und trägt Rückrufe ein. Spielen Sie einen Anruf durch: per Knopf oder mit eigenen Sätzen.</p>
+  <div class="ki-stage">
+    <div class="phone" style="position:static"><div class="phone-screen">
+      <div class="call-head"><b>BikeShop Haar</b><small>089 46 55 99 · KI-Assistent</small><div class="timer" id="call-timer">Anruf läuft · 00:00</div></div>
+      <div class="call-body" id="call-body" aria-live="polite"></div>
+      <div class="quick" id="quick"></div>
+      <form class="call-input" id="call-form"><input id="call-in" placeholder="Als Anrufer antworten …" aria-label="Antwort des Anrufers"><button type="submit" class="btn btn-green">Sagen</button></form>
+    </div></div>
+    <div class="ki-side">
+      <div class="card">
+        <h3>Wann geht die KI ran?</h3>
+        <div class="sit" id="sit">
+          <button type="button" data-sit="zu" aria-pressed="true">Laden geschlossen</button>
+          <button type="button" data-sit="mittag" aria-pressed="false">Mittagspause</button>
+          <button type="button" data-sit="besetzt" aria-pressed="false">Alle in der Werkstatt (nach 5× Klingeln)</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center">
+          <button type="button" class="btn btn-ink" id="call-new">Neuen Anruf starten</button>
+          <label class="speak"><input type="checkbox" id="speak"> KI-Antworten vorlesen</label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Was die KI im Hintergrund macht</h3>
+        <div class="log" id="ki-log"></div>
+      </div>
+      <div class="card">
+        <h3>Hinterlegte Logik</h3>
+        <div class="logic">
+          <div class="r"><b>Begrüßung</b><span>Nennt den Laden, sagt offen „Ich bin eine KI“ und warum gerade niemand rangeht. Bietet die drei Möglichkeiten an.</span></div>
+          <div class="r"><b>Reparaturstand</b><span>Erkennt den Kunden über Auftragsnummer oder Handynummer, liest den Status live aus der App und nennt die geplante Abholung.</span></div>
+          <div class="r"><b>Offene Rückfrage</b><span>Liest Arbeit und Preis vor. Freigabe am Telefon nur nach klarem Ja; wird in der App als „telefonisch über KI“ markiert.</span></div>
+          <div class="r"><b>Neuer Auftrag</b><span>Fragt Name, Handy, Rad, Problem und Wunschtermin ab. Legt den Auftrag als „Vorgemerkt“ an und schickt den Status-Link per SMS.</span></div>
+          <div class="r"><b>Rückruf</b><span>Trägt Wunschzeit ein. Der Rückruf steht rot in der Werkstatt-App, bis jemand anruft.</span></div>
+          <div class="r"><b>Grenzen</b><span>Keine Preiszusagen außerhalb der hinterlegten Liste, keine Zahlungsdaten am Telefon. Bei Unklarheit immer Rückruf anbieten.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="foot-note">Demo-Entwurf für BikeShop Haar. Namen, Aufträge und Preise sind Beispiele. In der fertigen Lösung läuft der Kunden-Link per SMS oder E-Mail, die Telefon-KI über die bestehende Rufnummer.</p>
+
+<button type="button" class="fb-btn" data-open="fb-ov">Idee oder Fehler melden</button>
+
+<!-- Dialoge -->
+<div class="overlay" id="status-ov" role="dialog" aria-modal="true" aria-labelledby="st-title">
+  <form class="modal" id="status-form">
+    <h3 id="st-title">Wie weit ist mein Rad?</h3>
+    <label>Auftragsnummer oder Handynummer<input id="st-q" placeholder="z. B. R-2411" required></label>
+    <div id="st-result"></div>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close="status-ov">Schließen</button><button type="submit" class="btn btn-green">Status anzeigen</button></div>
+    <small style="color:var(--muted)">Zum Ausprobieren: R-2411, R-2412, R-2409 oder R-2413</small>
+  </form>
+</div>
+
+<div class="overlay" id="new-ov" role="dialog" aria-modal="true" aria-labelledby="new-title">
+  <form class="modal" id="new-form">
+    <h3 id="new-title">Neue Reparaturannahme</h3>
+    <div class="form">
+      <label>Name<input id="f-name" required placeholder="z. B. Petra Lang"></label>
+      <label>Handy<input id="f-phone" required inputmode="tel" placeholder="0171 …"></label>
+      <label>Rad (Marke, Modell)<input id="f-bike" required placeholder="z. B. Winora Yucatan"></label>
+      <label>Art<select id="f-type"><option>E-Bike</option><option>Trekkingrad</option><option>Cityrad</option><option>Mountainbike</option><option>Kinderrad</option></select></label>
+      <div class="full"><div class="sec-title">Arbeiten</div>
+        <div class="checks" id="f-jobs">
+          <label><input type="checkbox" value="Inspektion" checked>Inspektion</label>
+          <label><input type="checkbox" value="Bremsen">Bremsen</label>
+          <label><input type="checkbox" value="Schaltung">Schaltung</label>
+          <label><input type="checkbox" value="Platten">Platten</label>
+          <label><input type="checkbox" value="Akku/Motor-Check">Akku/Motor-Check</label>
+          <label><input type="checkbox" value="Licht">Licht</label>
+        </div>
+      </div>
+      <label class="full">Was ist kaputt? (Kundenangabe)<textarea id="f-note" rows="2" placeholder="z. B. Bremse quietscht hinten"></textarea></label>
+      <label>Ohne Rückfrage bis (€)<input id="f-limit" type="number" min="0" step="10" value="120"></label>
+      <label>Abholung gewünscht<input id="f-pickup" placeholder="z. B. Freitag"></label>
+      <label class="full">Fotos vom Rad<input id="f-photos" type="file" accept="image/*" multiple></label>
+      <div class="photos full" id="f-prev"></div>
+    </div>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close="new-ov">Abbrechen</button><button type="submit" class="btn btn-green">Annehmen &amp; Link an Kunden</button></div>
+  </form>
+</div>
+
+<div class="overlay" id="fb-ov" role="dialog" aria-modal="true" aria-labelledby="fb-title">
+  <form class="modal" id="fb-form">
+    <h3 id="fb-title">Idee, Wunsch oder Fehler?</h3>
+    <p style="color:var(--muted);font-size:14px">Sie testen eine frühe Version. Schreiben Sie kurz, was fehlt oder stört. Mit Ihrem Namen können wir direkt nachfragen.</p>
+    <label>Ihr Name<input id="fb-name" required placeholder="Vor- und Nachname"></label>
+    <label>Art<select id="fb-kind"><option>Idee / Verbesserung</option><option>Fehler</option><option>Frage</option></select></label>
+    <label>Ihre Nachricht<textarea id="fb-text" rows="4" required></textarea></label>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close="fb-ov">Schließen</button><button type="submit" class="btn btn-green">Absenden</button></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- Gemeinsamer Datenstand ---------- */
+const STATUS = [
+  {k:'vorgemerkt', l:'Vorgemerkt'},
+  {k:'angenommen', l:'Angenommen'},
+  {k:'diagnose',   l:'In Prüfung'},
+  {k:'freigabe',   l:'Wartet auf Kunde'},
+  {k:'arbeit',     l:'In Arbeit'},
+  {k:'fertig',     l:'Fertig'},
+  {k:'abgeholt',   l:'Abgeholt'}
+];
+const label = k => STATUS.find(s=>s.k===k).l;
+const now = () => new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+const eur = n => n.toLocaleString('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0});
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const first = n => n.split(' ')[0];
+
+const state = {
+  sel:'R-2411', nextId:2414, kiLog:[], feedback:[],
+  orders:[
+    {id:'R-2411', name:'Maria Steiner', phone:'0170 1234567', bike:'Victoria eTrekking 12.8', type:'E-Bike', src:'Laden',
+     jobs:['Inspektion','Bremsen'], note:'Bremse vorne schleift, Kette knackt', limit:150, pickup:'Do, 12.11.', status:'freigabe',
+     pending:{text:'Kette und Ritzel sind verschlissen. Tausch empfohlen, sonst springt die Kette.', price:89},
+     callback:null, unread:0,
+     chat:[{f:'sys',t:'Rad angenommen um 09:12',at:'09:12'},{f:'shop',t:'Hallo Frau Steiner, Ihr Rad ist in der Werkstatt. Wir melden uns, falls etwas dazukommt.',at:'09:14'}]},
+    {id:'R-2412', name:'Thomas Berger', phone:'0151 7654321', bike:'Haibike Trekking 6', type:'E-Bike', src:'Laden',
+     jobs:['Akku/Motor-Check','Schaltung'], note:'Motor setzt manchmal aus', limit:200, pickup:'Fr, 13.11.', status:'arbeit',
+     pending:null, callback:{when:'heute ab 17 Uhr', done:false}, unread:1,
+     chat:[{f:'sys',t:'Rad angenommen um 08:40',at:'08:40'},{f:'kunde',t:'Bin bis 17 Uhr auf der Baustelle, bitte danach anrufen.',at:'10:02'}]},
+    {id:'R-2409', name:'Lena Wagner', phone:'0176 2223334', bike:'Kettler City Cruiser', type:'Cityrad', src:'Laden',
+     jobs:['Platten','Licht'], note:'Hinterrad platt, Rücklicht defekt', limit:60, pickup:'heute', status:'fertig',
+     pending:null, callback:null, unread:0,
+     chat:[{f:'sys',t:'Rad angenommen gestern 16:20',at:'16:20'},{f:'sys',t:'Status: Fertig',at:'11:05'}]},
+    {id:'R-2413', name:'Jonas Maier', phone:'0160 5556667', bike:'BBF Kinderrad 24"', type:'Kinderrad', src:'Laden',
+     jobs:['Bremsen','Inspektion'], note:'Vor dem Schulstart durchsehen', limit:80, pickup:'Sa, 14.11.', status:'angenommen',
+     pending:null, callback:null, unread:0,
+     chat:[{f:'sys',t:'Rad angenommen um 10:31',at:'10:31'}]}
+  ]
+};
+const cur = () => state.orders.find(o=>o.id===state.sel);
+const digits = s => String(s).replace(/\D/g,'');
+function findOrder(q){
+  const t = String(q).trim().toUpperCase().replace(/\s/g,'');
+  let o = state.orders.find(x=>x.id.replace('-','')===t.replace('-','') || x.id.endsWith(t.replace(/^R-?/,'')) && t.replace(/\D/g,'').length===4);
+  if(!o && digits(q).length>=6) o = state.orders.find(x=>digits(x.phone)===digits(q));
+  return o;
+}
+function newOrder(d){
+  const o = Object.assign({id:'R-'+(state.nextId++), type:'Fahrrad', jobs:[], note:'', limit:100, pickup:'offen', status:'vorgemerkt', pending:null, callback:null, unread:1, photos:[], chat:[]}, d);
+  state.orders.unshift(o); return o;
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2800)}
+
+/* ---------- Ansichten (Hash) ---------- */
+const APPV=['app','telefon-ki'];
+function route(){
+  let k=location.hash.slice(1);
+  if(!APPV.includes(k)&&!PAGES[k]) k='website';
+  const v=APPV.includes(k)?k:'website';
+  ['website','app','telefon-ki'].forEach(x=>document.getElementById('view-'+x).classList.toggle('on',x===v));
+  document.querySelectorAll('.demobar a').forEach(a=>a.setAttribute('aria-current',a.dataset.v===v?'page':'false'));
+  if(v==='website') renderSite(k); else {stopHero(); document.title=v==='app'?'Reparatur-App · BikeShop Haar Demo':'Telefon-KI · BikeShop Haar Demo'; window.scrollTo(0,0)}
+  if(v==='telefon-ki' && !ki.started) startCall();
+}
+window.addEventListener('hashchange',route);
+
+/* ---------- Homepage ---------- */
+const HOURS = {
+  winter:{name:'Winter (November bis Februar)', d:[[],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,12]],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,13]]]},
+  sommer:{name:'Sommer (März bis Oktober)', d:[[],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,12.5],[14,18]],[[9,14]]]}
+};
+const DAYS=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const fmtH = h => { const m=Math.round((h%1)*60); return `${Math.floor(h)}${m?'.'+String(m).padStart(2,'0'):''}`; };
+function season(d=new Date()){const m=d.getMonth();return (m>=2&&m<=9)?'sommer':'winter'}
+function openInfo(d=new Date()){
+  const s=HOURS[season(d)], h=d.getHours()+d.getMinutes()/60, slots=s.d[d.getDay()];
+  const open = slots.find(([a,b])=>h>=a&&h<b);
+  if(open) return {open:true, txt:`Jetzt geöffnet bis ${fmtH(open[1])} Uhr`};
+  const later = slots.find(([a])=>h<a);
+  if(later) return {open:false, txt:`Geschlossen · öffnet heute um ${fmtH(later[0])} Uhr`};
+  for(let i=1;i<=7;i++){const nd=(d.getDay()+i)%7; if(s.d[nd].length) return {open:false, txt:`Geschlossen · öffnet ${i===1?'morgen':DAYS[nd]} um ${fmtH(s.d[nd][0][0])} Uhr`}}
+  return {open:false,txt:'Geschlossen'};
+}
+
+
+function statusCard(o){
+  const col = o.status==='fertig'?'var(--green)':o.status==='freigabe'?'var(--amber-soft)':'var(--sky-soft)';
+  const fg = o.status==='fertig'?'#fff':'var(--ink)';
+  const txt = o.status==='fertig'?'Ihr Rad ist fertig und kann abgeholt werden.':o.status==='freigabe'?'Die Werkstatt hat eine Rückfrage an Sie.':o.status==='vorgemerkt'?'Ihr Auftrag ist vorgemerkt. Bringen Sie das Rad einfach vorbei.':`Geplante Abholung: ${esc(o.pickup)}`;
+  return `<div class="status-result" style="background:${col};color:${fg}"><b style="font-family:var(--font-display);font-size:18px">${label(o.status)}</b><p style="margin-top:4px">${esc(o.bike)} · ${txt}</p></div>
+    <button type="button" class="btn btn-ink" data-goto-app="${o.id}">Im Kunden-Handy öffnen</button>`;
+}
+
+/* ---------- App ---------- */
+function chatHtml(o){
+  return o.chat.map(m=> m.f==='sys' ? `<div class="bubble sys">${esc(m.t)}</div>`
+    : `<div class="bubble ${m.f}">${esc(m.t)}<time>${m.f==='shop'?'Werkstatt':esc(first(o.name))} · ${m.at}</time></div>`).join('');
+}
+function renderKpis(){
+  const c=f=>state.orders.filter(f).length;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><b>${c(o=>['vorgemerkt','angenommen','diagnose','arbeit'].includes(o.status))}</b><span>offen</span></div>
+    <div class="kpi warn"><b>${c(o=>o.status==='freigabe')}</b><span>warten auf Kunde</span></div>
+    <div class="kpi ok"><b>${c(o=>o.status==='fertig')}</b><span>fertig zur Abholung</span></div>
+    <div class="kpi call"><b>${c(o=>o.callback&&!o.callback.done)}</b><span>Rückrufe offen</span></div>`;
+}
+function renderList(){
+  document.getElementById('list').innerHTML=state.orders.map(o=>`
+    <button type="button" class="order" role="listitem" data-id="${o.id}" aria-current="${o.id===state.sel}">
+      <span class="stripe st-${o.status}"></span>
+      <span class="o-main">
+        <span class="o-top"><span>${o.id}</span><span>Abholung ${esc(o.pickup)}</span></span>
+        <span class="o-name">${esc(o.name)}</span>
+        <span class="o-bike">${esc(o.bike)}</span>
+        <span class="flags">
+          <span class="chip s-${o.status}">${label(o.status)}</span>
+          ${o.src!=='Laden'?`<span class="chip src">${esc(o.src)}</span>`:''}
+          ${o.callback&&!o.callback.done?'<span class="chip call">Rückruf</span>':''}
+          ${o.unread?`<span class="chip msg">${o.unread} neu</span>`:''}
+        </span>
+      </span>
+    </button>`).join('');
+}
+function renderDetail(){
+  const o=cur();
+  document.getElementById('detail').innerHTML=`
+    <div class="d-head"><h3>${esc(o.name)}</h3><span class="meta">${o.id} · ${esc(o.phone)} · ${esc(o.bike)} (${esc(o.type)}) · Quelle: ${esc(o.src)}</span></div>
+    <div class="facts">
+      <div class="fact"><small>Arbeiten</small><span>${esc(o.jobs.join(', ')||'noch offen')}</span></div>
+      <div class="fact"><small>Ohne Rückfrage bis</small><span>${eur(o.limit)}</span></div>
+      <div class="fact"><small>Abholung</small><span>${esc(o.pickup)}</span></div>
+    </div>
+    ${o.note?`<div><div class="sec-title">Kundenangabe</div>${esc(o.note)}</div>`:''}
+    ${o.photos&&o.photos.length?`<div class="photos">${o.photos.map(p=>`<img src="${p}" alt="Foto vom Rad">`).join('')}</div>`:''}
+    ${o.callback&&!o.callback.done?`<div class="callback-box"><span class="grow"><b>Kunde bittet um Rückruf</b> · ${esc(o.callback.when)} · ${esc(o.phone)}</span><button type="button" class="btn btn-ghost" id="cb-done">Erledigt</button></div>`:''}
+    <div><div class="sec-title">Status setzen</div>
+      <div class="status-row">${STATUS.map(s=>`<button type="button" data-st="${s.k}" aria-pressed="${s.k===o.status}">${s.l}</button>`).join('')}</div></div>
+    <div><div class="sec-title">Rückfrage mit Preis an Kunden</div>
+      ${o.pending?`<div class="callback-box" style="background:var(--amber-soft)"><span class="grow"><b style="color:#8a5a00">Offen:</b> ${esc(o.pending.text)} · ${eur(o.pending.price)}</span></div>`:`
+      <div class="ask">
+        <input id="ask-text" placeholder="Was ist zusätzlich nötig?" aria-label="Zusatzarbeit">
+        <input id="ask-price" type="number" min="0" step="1" placeholder="€" aria-label="Preis in Euro">
+        <button type="button" class="btn btn-amber" id="ask-send">Zur Freigabe senden</button>
+      </div>
+      <div class="templates">
+        <button type="button" data-tpl="Kette verschlissen, Tausch empfohlen|39">Kette 39 €</button>
+        <button type="button" data-tpl="Bremsbeläge hinten abgefahren|29">Bremsbeläge 29 €</button>
+        <button type="button" data-tpl="Mantel rissig, Schlauch und Mantel neu|45">Mantel + Schlauch 45 €</button>
+        <button type="button" data-tpl="Software-Update für den Motor|25">Motor-Update 25 €</button>
+      </div>`}
+    </div>
+    <div class="me-shop"><div class="sec-title">Nachrichten</div>
+      <div class="chat" id="w-chat">${chatHtml(o)}</div>
+      <div class="send"><input id="w-msg" placeholder="Nachricht an ${esc(first(o.name))} …" aria-label="Nachricht an Kunden"><button type="button" class="btn btn-green" id="w-send">Senden</button></div>
+    </div>`;
+  const wc=document.getElementById('w-chat'); wc.scrollTop=wc.scrollHeight;
+}
+function renderPhone(){
+  const o=cur();
+  document.getElementById('p-sub').textContent=`Auftrag ${o.id} · ${o.bike}`;
+  const map={vorgemerkt:0,angenommen:0,diagnose:1,freigabe:1,arbeit:2,fertig:3,abgeholt:3};
+  const pos=map[o.status];
+  const steps=['Angenommen','In Prüfung','In Arbeit','Fertig'].map((s,i)=>{
+    let cls=i<pos?'done':i===pos?'now':'';
+    if(i===pos&&['fertig','abgeholt','angenommen'].includes(o.status)) cls='done';
+    return `<div class="step ${cls}"><i></i>${s}</div>`}).join('');
+  let hero;
+  if(o.status==='fertig') hero=`<div class="hero h-fertig"><div class="big-check">✓</div><h3>Ihr Rad ist fertig!</h3><p>Abholbereit zu unseren Öffnungszeiten. Bezahlung bar oder mit Karte im Laden.</p></div>`;
+  else if(o.status==='abgeholt') hero=`<div class="hero h-abgeholt"><h3>Abgeholt. Gute Fahrt!</h3><p>Danke für Ihren Besuch. Die nächste Inspektion empfehlen wir im Frühjahr.</p></div>`;
+  else if(o.status==='freigabe') hero=`<div class="hero h-freigabe"><h3>Ihre Rückmeldung wird gebraucht</h3><p>Wir haben etwas gefunden, das nicht im Auftrag steht.</p></div>`;
+  else if(o.status==='vorgemerkt') hero=`<div class="hero h-normal"><h3>Auftrag vorgemerkt</h3><p>Bringen Sie Ihr Rad zu unseren Öffnungszeiten vorbei. Wunschtermin: <b>${esc(o.pickup)}</b></p></div>`;
+  else hero=`<div class="hero h-normal"><h3>${label(o.status)}</h3><p>${o.status==='angenommen'?'Ihr Rad steht bei uns und kommt bald auf den Montageständer.':o.status==='diagnose'?'Wir sehen uns Ihr Rad gerade genau an.':'Wir arbeiten an Ihrem Rad.'} Geplante Abholung: <b>${esc(o.pickup)}</b></p></div>`;
+  const approve=o.pending?`
+    <div class="approve"><div>${esc(o.pending.text)}</div><div class="price">+ ${eur(o.pending.price)}</div>
+      <div class="row"><button type="button" class="btn btn-green" id="k-yes">Freigeben</button><button type="button" class="btn btn-red" id="k-no">Nicht machen</button></div>
+      <button type="button" class="btn btn-ghost" id="k-call-q">Lieber kurz telefonieren</button></div>`:'';
+  const cb=o.callback&&!o.callback.done
+    ? `<div class="cb"><span class="done">Rückruf angefragt: ${esc(o.callback.when)}</span><span style="font-size:13px;color:var(--muted)">Wir rufen Sie unter ${esc(o.phone)} an.</span></div>`
+    : `<div class="cb"><div class="sec-title" style="margin:0">Lieber persönlich sprechen?</div>
+        <select id="k-when" aria-label="Wann sollen wir anrufen?"><option>so bald wie möglich</option><option>heute in der Mittagspause</option><option>heute ab 17 Uhr</option><option>morgen Vormittag</option></select>
+        <button type="button" class="btn btn-ghost" id="k-call">Bitte ruft mich an</button></div>`;
+  document.getElementById('phone').innerHTML=`${hero}<div class="steps">${steps}</div>${approve}
+    <div><div class="sec-title">Nachricht an die Werkstatt</div><div class="chat" id="k-chat">${chatHtml(o)}</div>
+      <div class="send"><input id="k-msg" placeholder="Frage stellen …" aria-label="Nachricht an die Werkstatt"><button type="button" class="btn btn-green" id="k-send">Senden</button></div></div>
+    ${cb}
+    <div class="info-list"><span><b>Ihr Auftrag:</b> ${esc(o.jobs.join(', ')||'wird bei Annahme festgelegt')}</span><span><b>Ohne Rückfrage bis:</b> ${eur(o.limit)}</span><span><b>Telefon:</b> 089 46 55 99</span></div>`;
+  const kc=document.getElementById('k-chat'); kc.scrollTop=kc.scrollHeight;
+}
+function renderAll(){renderKpis();renderList();renderDetail();renderPhone();renderLog()}
+function setStatus(o,k){
+  if(o.status===k) return; o.status=k; if(k!=='freigabe') o.pending=null;
+  o.chat.push({f:'sys',t:`Status: ${label(k)}`,at:now()});
+  if(k==='fertig') toast(`${first(o.name)} bekommt jetzt: „Ihr Rad ist fertig“`);
+}
+function approveOrder(o,yes,via){
+  o.chat.push({f:'kunde',t:`${yes?'Freigegeben':'Bitte nicht machen'}: ${o.pending.text}${yes?' ('+eur(o.pending.price)+')':''}${via?' · '+via:''}`,at:now()});
+  if(yes) o.limit+=o.pending.price; o.pending=null; o.status='arbeit'; o.unread++;
+}
+
+/* ---------- Telefon-KI ---------- */
+const ki={started:false, step:'start', d:{}, sit:'zu', t0:0, timer:null, order:null};
+const SIT={zu:'der Laden hat gerade geschlossen', mittag:'wir sind gerade in der Mittagspause', besetzt:'gerade sind alle Kollegen in der Werkstatt beschäftigt'};
+function kiLog(t){state.kiLog.unshift({at:now(),t}); renderLog()}
+function renderLog(){const el=document.getElementById('ki-log'); if(el) el.innerHTML=state.kiLog.map(l=>`<div><time>${l.at}</time><span>${esc(l.t)}</span></div>`).join('')||'<span style="color:var(--muted)">Noch keine Aktionen.</span>'}
+function say(t,who='ki'){
+  const b=document.getElementById('call-body');
+  b.insertAdjacentHTML('beforeend',`<div class="say ${who}">${esc(t)}</div>`); b.scrollTop=b.scrollHeight;
+  if(who==='ki'&&document.getElementById('speak').checked){try{const u=new SpeechSynthesisUtterance(t);u.lang='de-DE';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+}
+function quick(opts){document.getElementById('quick').innerHTML=opts.map(o=>`<button type="button" data-q="${esc(o)}">${esc(o)}</button>`).join('')}
+const MAIN=['Wie weit ist mein Rad?','Reparatur anmelden','Bitte um Rückruf','Wann haben Sie offen?'];
+function startCall(){
+  ki.started=true; ki.step='menu'; ki.d={}; ki.order=null;
+  document.getElementById('call-body').innerHTML='';
+  clearInterval(ki.timer); ki.t0=Date.now();
+  ki.timer=setInterval(()=>{const s=Math.floor((Date.now()-ki.t0)/1000);document.getElementById('call-timer').textContent=`Anruf läuft · ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`},1000);
+  kiLog(`Eingehender Anruf · KI übernimmt, weil ${SIT[ki.sit]}`);
+  say(`Grüß Gott beim BikeShop Haar. Ich bin der digitale Telefonassistent, also eine KI. Leider kann gerade niemand persönlich rangehen, ${SIT[ki.sit]}. Ich kann Ihnen den Stand Ihrer Reparatur sagen, eine Reparatur aufnehmen oder einen Rückruf eintragen. Was darf ich für Sie tun?`);
+  quick(MAIN);
+}
+function intent(t){
+  t=t.toLowerCase();
+  if(/fertig|wie weit|stand|status|abholen/.test(t)) return 'status';
+  if(/reparatur|anmelden|kaputt|termin|platt|bremse|inspektion|bringen/.test(t)) return 'neu';
+  if(/rückruf|zurückruf|anrufen|mensch|persönlich|mitarbeiter/.test(t)) return 'cb';
+  if(/offen|öffnung|zeiten|wann.*(auf|da)/.test(t)) return 'zeiten';
+  if(/nein|danke|tschüss|nichts|das wars|das war/.test(t)) return 'ende';
+  return null;
+}
+function menuAgain(){ki.step='menu';say('Kann ich sonst noch etwas für Sie tun?');quick(['Nein, danke',...MAIN.slice(0,3)])}
+function hear(t){
+  if(!t.trim()) return; say(t,'me'); const s=ki.step;
+  if(s==='ended'){return}
+  if(s==='menu'){
+    const i=intent(t);
+    if(i==='status'){ki.step='st-id';say('Gern. Nennen Sie mir bitte Ihre Auftragsnummer aus der SMS oder Ihre Handynummer.');quick(['R-2411','R-2409','0151 7654321'])}
+    else if(i==='neu'){ki.step='n-name';ki.d={};say('Gern nehme ich die Reparatur auf. Wie ist Ihr Name?');quick([])}
+    else if(i==='cb'){ki.step='cb-name';ki.d={};say('Ich trage gern einen Rückruf ein. Wie ist Ihr Name?');quick([])}
+    else if(i==='zeiten'){const info=openInfo();say(`${info.txt}. Im Winter sind wir Montag bis Freitag von 9 bis 12 Uhr 30 und von 14 bis 18 Uhr da, mittwochs nur vormittags, samstags von 9 bis 13 Uhr.`);kiLog('Öffnungszeiten beantwortet');menuAgain()}
+    else if(i==='ende'){endCall()}
+    else {say('Das habe ich leider nicht ganz verstanden. Geht es um den Stand Ihrer Reparatur, eine neue Reparatur oder einen Rückruf?');quick(MAIN)}
+    return;
+  }
+  if(s==='st-id'){
+    const o=findOrder(t);
+    if(!o){say('Dazu finde ich leider keinen Auftrag. Soll ich einen Rückruf eintragen, damit ein Kollege nachsieht?');ki.step='st-nf';quick(['Ja, bitte Rückruf','Nein, danke']);kiLog(`Auftrag zu „${t}“ nicht gefunden`);return}
+    ki.order=o; state.sel=o.id; kiLog(`Status aus App gelesen: ${o.id} (${label(o.status)})`);
+    const anrede=`Ich habe Ihren Auftrag gefunden: ${o.bike}, auf den Namen ${o.name}.`;
+    if(o.status==='freigabe'){say(`${anrede} Die Werkstatt hat eine Rückfrage: ${o.pending.text} Das kostet zusätzlich ${o.pending.price} Euro. Sollen wir das machen?`);ki.step='st-frei';quick(['Ja, bitte machen','Nein, nicht machen','Lieber mit jemandem sprechen'])}
+    else if(o.status==='fertig'){say(`${anrede} Gute Nachricht: Ihr Rad ist fertig und kann abgeholt werden. ${openInfo().txt}.`);menuAgain()}
+    else if(o.status==='abgeholt'){say(`${anrede} Laut System wurde das Rad bereits abgeholt.`);menuAgain()}
+    else if(o.status==='vorgemerkt'){say(`${anrede} Der Auftrag ist vorgemerkt. Bringen Sie das Rad einfach zu den Öffnungszeiten vorbei.`);menuAgain()}
+    else {say(`${anrede} Der aktuelle Stand: ${label(o.status)}. Geplante Abholung ist ${o.pickup}. Sobald es fertig ist, bekommen Sie eine Nachricht aufs Handy.`);menuAgain()}
+    renderAll(); return;
+  }
+  if(s==='st-frei'){
+    const o=ki.order, tl=t.toLowerCase();
+    if(/sprechen|rückruf|mensch|jemand/.test(tl)){o.callback={when:'nächster Werktag, vormittags',done:false};o.chat.push({f:'sys',t:'Rückruf über Telefon-KI angefragt',at:now()});kiLog(`Rückruf eingetragen für ${o.id}`);say('In Ordnung. Ich trage einen Rückruf ein, ein Kollege meldet sich am nächsten Werktag vormittags bei Ihnen.');renderAll();menuAgain();return}
+    const yes=/^ja|bitte machen|freigeb|ok|passt/.test(tl), no=/nein|nicht/.test(tl);
+    if(!yes&&!no){say('Damit nichts schiefgeht: Sollen wir die Arbeit machen, ja oder nein?');quick(['Ja, bitte machen','Nein, nicht machen']);return}
+    approveOrder(o,yes&&!no,'telefonisch über KI');
+    kiLog(`${o.id}: Zusatzarbeit ${yes&&!no?'freigegeben':'abgelehnt'} (telefonisch über KI)`);
+    say(yes&&!no?'Danke, ich habe die Freigabe an die Werkstatt weitergegeben. Sie sehen das auch in Ihrer Status-Nachricht.':'Verstanden, die Werkstatt macht das nicht. Ich habe es notiert.');
+    renderAll(); menuAgain(); return;
+  }
+  if(s==='st-nf'){ if(/ja/.test(t.toLowerCase())){ki.step='cb-name';ki.d={};say('Wie ist Ihr Name?');quick([])} else endCall(); return }
+  // Neuer Auftrag
+  if(s==='n-name'){ki.d.name=t.trim();ki.step='n-phone';say(`Danke, ${ki.d.name}. Unter welcher Handynummer erreichen wir Sie? Dorthin schicken wir auch den Status-Link.`);quick([]);return}
+  if(s==='n-phone'){ki.d.phone=t.trim();ki.step='n-bike';say('Um welches Rad geht es? Marke und Art reichen, zum Beispiel Winora E-Bike.');return}
+  if(s==='n-bike'){ki.d.bike=t.trim();ki.step='n-note';say('Was soll gemacht werden, oder was ist kaputt?');quick(['Inspektion','Platten hinten','Bremse quietscht'])
+    ;return}
+  if(s==='n-note'){ki.d.note=t.trim();ki.step='n-when';say('Wann möchten Sie das Rad bringen? Oder sollen wir es mit dem Hol- und Bringservice abholen?');quick(['Morgen früh','Diese Woche','Bitte abholen']);return}
+  if(s==='n-when'){ki.d.when=t.trim();ki.step='n-ok';say(`Ich fasse zusammen: ${ki.d.name}, ${ki.d.bike}, ${ki.d.note}, Termin: ${ki.d.when}. Soll ich das so eintragen?`);quick(['Ja, passt','Nein, nochmal']);return}
+  if(s==='n-ok'){
+    if(/nein|nochmal/.test(t.toLowerCase())){ki.step='n-name';say('Kein Problem, fangen wir neu an. Wie ist Ihr Name?');quick([]);return}
+    const o=newOrder({name:ki.d.name,phone:ki.d.phone,bike:ki.d.bike,note:ki.d.note,pickup:ki.d.when,src:'Telefon-KI',
+      chat:[{f:'sys',t:`Über Telefon-KI angenommen um ${now()}`,at:now()}]});
+    state.sel=o.id; kiLog(`Neuer Auftrag ${o.id} angelegt · SMS mit Status-Link an ${o.phone}`);
+    say(`Erledigt. Ihre Auftragsnummer ist ${o.id.split('-').join(' ')}. Sie bekommen gleich eine SMS mit dem Link zum Reparaturstatus.`);
+    renderAll(); menuAgain(); return;
+  }
+  // Rückruf
+  if(s==='cb-name'){ki.d.name=t.trim();ki.step='cb-phone';say('Unter welcher Nummer sollen wir zurückrufen?');return}
+  if(s==='cb-phone'){ki.d.phone=t.trim();ki.step='cb-why';say('Worum geht es kurz?');return}
+  if(s==='cb-why'){ki.d.why=t.trim();ki.step='cb-when';say('Wann passt es Ihnen am besten?');quick(['Morgen Vormittag','Morgen ab 17 Uhr','Egal']);return}
+  if(s==='cb-when'){
+    let o=state.orders.find(x=>digits(x.phone)===digits(ki.d.phone));
+    if(!o) o=newOrder({name:ki.d.name,phone:ki.d.phone,bike:'noch unbekannt',note:`Rückruf: ${ki.d.why}`,src:'Telefon-KI',chat:[{f:'sys',t:'Rückrufwunsch über Telefon-KI',at:now()}]});
+    o.callback={when:t.trim(),done:false}; state.sel=o.id;
+    kiLog(`Rückruf eingetragen: ${ki.d.name}, ${t.trim()}`);
+    say(`Ich habe den Rückruf eingetragen: ${t.trim()}, unter ${ki.d.phone}. Ein Kollege meldet sich bei Ihnen.`);
+    renderAll(); menuAgain(); return;
+  }
+}
+function endCall(){say('Danke für Ihren Anruf beim BikeShop Haar. Auf Wiederhören!');say('Anruf beendet','end');ki.step='ended';clearInterval(ki.timer);quick(['Neuer Anruf']);kiLog('Anruf beendet')}
+
+/* ---------- Ereignisse ---------- */
+function openOv(id){const ov=document.getElementById(id);ov.classList.add('open');const f=ov.querySelector('input,textarea');f&&f.focus()}
+function closeOv(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,a'); if(!t) return;
+  if(t.dataset.scroll){e.preventDefault();if(location.hash!=='#website'&&location.hash!==''){location.hash='website'}setTimeout(()=>document.getElementById(t.dataset.scroll).scrollIntoView({behavior:'smooth'}),30);return}
+  if(t.dataset.open){openOv(t.dataset.open);return}
+  if(t.dataset.close){closeOv(t.dataset.close);return}
+  if(t.dataset.gotoApp){state.sel=t.dataset.gotoApp;closeOv('status-ov');renderAll();setDev('kunde');location.hash='app';return}
+  if(t.dataset.q){ if(t.dataset.q==='Neuer Anruf'){startCall()} else hear(t.dataset.q); return}
+  if(t.dataset.sit){ki.sit=t.dataset.sit;document.querySelectorAll('#sit button').forEach(b=>b.setAttribute('aria-pressed',b===t));startCall();return}
+  const o=cur();
+  if(t.dataset.id){state.sel=t.dataset.id;cur().unread=0;renderAll();return}
+  if(t.dataset.st){setStatus(o,t.dataset.st);renderAll();return}
+  if(t.dataset.tpl){const [a,b]=t.dataset.tpl.split('|');document.getElementById('ask-text').value=a;document.getElementById('ask-price').value=b;return}
+  switch(t.id){
+    case 'ask-send':{const a=document.getElementById('ask-text').value.trim(),p=Number(document.getElementById('ask-price').value);
+      if(!a||!p){toast('Bitte Arbeit und Preis eintragen');return}
+      o.pending={text:a,price:p};o.status='freigabe';o.chat.push({f:'shop',t:`Rückfrage: ${a} (${eur(p)}). Bitte in der App freigeben oder ablehnen.`,at:now()});
+      toast('Rückfrage ist auf dem Kundenhandy');renderAll();break}
+    case 'w-send':{const i=document.getElementById('w-msg');if(!i.value.trim())return;o.chat.push({f:'shop',t:i.value.trim(),at:now()});renderAll();break}
+    case 'k-send':{const i=document.getElementById('k-msg');if(!i.value.trim())return;o.chat.push({f:'kunde',t:i.value.trim(),at:now()});o.unread++;renderAll();break}
+    case 'k-yes':approveOrder(o,true);toast('Freigabe ist in der Werkstatt angekommen');renderAll();break
+    case 'k-no':approveOrder(o,false);renderAll();break
+    case 'k-call-q':o.callback={when:'so bald wie möglich',done:false};o.chat.push({f:'sys',t:'Kunde bittet um Rückruf',at:now()});renderAll();break
+    case 'k-call':o.callback={when:document.getElementById('k-when').value,done:false};o.chat.push({f:'sys',t:`Rückruf gewünscht: ${o.callback.when}`,at:now()});toast('Die Werkstatt sieht Ihren Rückrufwunsch');renderAll();break
+    case 'cb-done':o.callback.done=true;o.chat.push({f:'sys',t:'Kunde zurückgerufen',at:now()});renderAll();break
+    case 'call-new':startCall();break
+    case 'dev-werkstatt':setDev('werkstatt');break
+    case 'dev-kunde':setDev('kunde');break
+  }
+});
+function setDev(v){document.body.dataset.dev=v;document.getElementById('dev-werkstatt').setAttribute('aria-pressed',v==='werkstatt');document.getElementById('dev-kunde').setAttribute('aria-pressed',v==='kunde')}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&['w-msg','k-msg'].includes(e.target.id)){e.preventDefault();document.getElementById(e.target.id==='w-msg'?'w-send':'k-send').click()}
+  if(e.key==='Escape'){['new-ov','fb-ov','status-ov'].forEach(closeOv)}
+});
+document.getElementById('call-form').addEventListener('submit',e=>{e.preventDefault();const i=document.getElementById('call-in');const v=i.value;i.value='';if(ki.step==='ended'){startCall();return}hear(v)});
+document.getElementById('status-form').addEventListener('submit',e=>{
+  e.preventDefault();const o=findOrder(document.getElementById('st-q').value);
+  document.getElementById('st-result').innerHTML=o?statusCard(o):'<p style="color:var(--red)">Kein Auftrag gefunden. Bitte Nummer aus der SMS prüfen oder 089 46 55 99 anrufen.</p>';
+});
+
+let photoData=[];
+document.getElementById('f-photos').addEventListener('change',e=>{
+  photoData=[];const prev=document.getElementById('f-prev');prev.innerHTML='';
+  [...e.target.files].slice(0,4).forEach(f=>{const r=new FileReader();r.onload=()=>{photoData.push(r.result);prev.insertAdjacentHTML('beforeend',`<img src="${r.result}" alt="Vorschau">`)};r.readAsDataURL(f)});
+});
+document.getElementById('new-form').addEventListener('submit',e=>{
+  e.preventDefault();const v=id=>document.getElementById(id).value.trim();
+  const o=newOrder({name:v('f-name'),phone:v('f-phone'),bike:v('f-bike'),type:v('f-type'),src:'Laden',status:'angenommen',unread:0,
+    jobs:[...document.querySelectorAll('#f-jobs input:checked')].map(c=>c.value),note:v('f-note'),limit:Number(v('f-limit'))||0,pickup:v('f-pickup')||'offen',photos:photoData.slice(),
+    chat:[{f:'sys',t:`Rad angenommen um ${now()}`,at:now()},{f:'shop',t:'Hallo, Ihr Rad ist angenommen. Hier sehen Sie jederzeit den Stand.',at:now()}]});
+  state.sel=o.id;e.target.reset();photoData=[];document.getElementById('f-prev').innerHTML='';closeOv('new-ov');renderAll();toast(`Link per SMS an ${o.phone} (in der Demo nur simuliert)`);
+});
+document.getElementById('fb-form').addEventListener('submit',e=>{
+  e.preventDefault();state.feedback.push({name:document.getElementById('fb-name').value,kind:document.getElementById('fb-kind').value,text:document.getElementById('fb-text').value,at:new Date().toISOString()});
+  e.target.reset();closeOv('fb-ov');toast('Danke! In der Demo wird das noch nicht verschickt.');
+});
+
+
+/* ---------- Homepage: Einzelseiten, Landingpages, Marken ---------- */
+const SITE='bikeshophaar.de';
+const ICON={
+  werkstatt:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>',
+  ebike:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  hol:'<rect x="1" y="7" width="13" height="10" rx="1"/><path d="M14 10h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  rad:'<circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17 9 9h6l3.5 8M9 9l3 8 3-8M14 6h3"/>',
+  geld:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  schild:'<path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5z"/>',
+  check:'<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
+  teile:'<circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8 7 17M17 7l2.8-2.8"/>'
+};
+const ico=k=>`<div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3d7a17" stroke-width="2">${ICON[k]}</svg></div>`;
+
+/* Fahrrad-Illustration (eigene Zeichnung, keine Herstellerfotos) */
+function bikeSvg(color,frame,big){
+  const top = frame==='wave' ? 'M52 92 Q66 60 98 54' : 'M60 52 L118 52';
+  const seat = frame==='wave' ? 'M98 54 L84 96' : 'M60 52 L84 96';
+  return `<svg class="bike-fig${big?' big':''}" viewBox="0 0 220 130" role="img" aria-label="Illustration eines E-Bikes">
+    <g fill="none" stroke="#1b1f1b" stroke-width="3"><circle cx="48" cy="96" r="30"/><circle cx="172" cy="96" r="30"/></g>
+    <g class="spin" style="transform-origin:48px 96px" stroke="#9aa39a" stroke-width="1.2"><path d="M18 96H78M48 66V126M27 75L69 117M69 75L27 117"/></g>
+    <g class="spin" style="transform-origin:172px 96px" stroke="#9aa39a" stroke-width="1.2"><path d="M142 96H202M172 66V126M151 75L193 117M193 75L151 117"/></g>
+    <g fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="${top}"/><path d="M84 96 L128 44"/><path d="${seat}"/><path d="M84 96 L48 96 L60 52"/><path d="M128 44 L172 96"/>
+    </g>
+    <rect x="92" y="64" width="34" height="11" rx="4" transform="rotate(-49 109 70)" fill="#1b1f1b"/>
+    <circle cx="84" cy="96" r="9" fill="#1b1f1b"/>
+    <g stroke="#1b1f1b" stroke-width="4" stroke-linecap="round" fill="none"><path d="M128 44 L124 30 L140 26"/><path d="M58 48 L50 40 M44 40 L64 40"/><path d="M30 60 L64 60"/></g>
+  </svg>`;
+}
+
+const BRANDS=[
+  {k:'besv',name:'BESV',color:'#2f6fb5',frame:'wave',
+   intro:'BESV baut E-Bikes mit eigenständigem Design und ist in Europa und vielen weiteren Ländern vertreten. Im Programm sind City-, Trekking- und Sport-E-Bikes.',
+   model:'CT-B 1.0 Low Step',cat:'Trekking-E-Bike mit tiefem Einstieg',price:'4.499 € (Preis beim Hersteller)',
+   ideal:'Pendeln zur Arbeit und lange Touren mit Gepäck, bequemes Auf- und Absteigen',
+   specs:[['Motor','Bosch Performance Line PX, Mittelmotor, 90 Nm'],['Akku','800 Wh'],['Federung','Federgabel mit 63 mm Federweg'],['Bremsen','hydraulische Scheibenbremsen'],['Gewicht','30,5 kg']],
+   more:[],
+   src:[['Notebookcheck: BESV CT-B 1.0','https://www.notebookcheck.com/Mit-Bosch-Mittelmotor-90-Nm-800-Wh-Starkes-E-Bike-transportiert-knapp-130-Kilo.1365755.0.html']]},
+  {k:'victoria',name:'Victoria',color:'#b8322e',frame:'diamond',
+   intro:'Victoria steht für komfortable Trekking- und Tourenräder für den Alltag, mit Bosch-Antrieben und durchdachter Ausstattung.',
+   model:'Avyon 4',cat:'Trekking-E-Bike für Familie und Alltag',price:'ab 3.799 €',
+   ideal:'Familienalltag mit Kinderanhänger, Einkauf und Wochenendtour',
+   specs:[['Motor','Bosch Performance Line PX'],['Akku','600 Wh'],['Anhänger','Anhängerfreigabe'],['Ausstattung','volle Alltagsausstattung']],
+   more:[['Tresalo 4','günstiges Touren-E-Bike unter 3.000 €: Bosch Performance Line, 540-Wh-Akku, 27,1 kg']],
+   src:[['bike-x: Trekking-E-Bikes im Test','https://www.bike-x.de/e-bike/tests/die-besten-trekking-e-bikes-im-test/'],['BIKE: Victoria Tresalo 4 im Test','https://www.bike-magazin.de/fahrraeder/city-bikes/gunstiges-trekking-e-bike-victoria-tresalo-4-test/']]},
+  {k:'kettler',name:'Kettler',color:'#4f7a52',frame:'wave',
+   intro:'Kettler Alu-Rad aus Köln baut komfortable City- und Trekking-E-Bikes mit Aluminiumrahmen, oft mit wartungsarmem Riemenantrieb.',
+   model:'Quadriga PX5 FL 800',cat:'Komfort-E-Bike mit Wave-Rahmen, Modelljahr 2026',price:'4.599 €',
+   ideal:'Stadt und Ausflüge, wenig Wartung dank Riemen und Nabenschaltung',
+   specs:[['Motor','Bosch Performance Line PX, 85 Nm'],['Akku','Bosch PowerTube 800 Wh'],['Display','Bosch Kiox 300, navigationsfähig'],['Schaltung','Shimano Nexus 5-Gang mit Gates-Riemen'],['Reifen','Schwalbe Marathon E-Plus'],['Zul. Gesamtgewicht','150 kg']],
+   more:[['Quadriga PX5 RT 800','gleiche Basis, mit Rücktrittbremse']],
+   src:[['bike-discount: Kettler Quadriga PX5 FL 800','https://www.bike-discount.de/en/kettler-quadriga-px5-fl-800-wave-moor-green']]},
+  {k:'haibike',name:'Haibike',color:'#d4561f',frame:'diamond',
+   intro:'Haibike steht für sportliche E-Bikes, vom E-Mountainbike bis zum robusten Trekkingrad.',
+   model:'Trekking 7',cat:'Trekking-E-Bike, Modelljahr 2026',price:'UVP 4.499 €',
+   ideal:'Sportliche Touren, Schotterwege und lange Strecken',
+   specs:[['Motor','Bosch Performance Line CX (Gen. 5), 85 Nm'],['Akku','Bosch PowerTube 800 Wh'],['Schaltung','Shimano 1×11'],['Rahmen','Aluminium, auch mit tiefem Einstieg (LOW)']],
+   more:[['Adventr','Mischung aus Trekkingrad und Vollgefedertem, mit Bosch Performance Line PX']],
+   src:[['Haibike: Modelle mit Bosch-Update','https://haibike.com/de-de/collections/bosch-update-120-nm-bikes'],['elektrofahrrad24: Haibike Trekking 7','https://www.elektrofahrrad24.de/haibike-trekking-7'],['Haibike Adventr','https://haibike.com/pages/adventr']]},
+  {k:'winora',name:'Winora',color:'#245b78',frame:'diamond',
+   intro:'Winora blickt auf über 100 Jahre Tradition zurück. Die neue Yucatan-Serie ist für Alltag, Radweg und leichtes Gelände gedacht.',
+   model:'Yucatan X12 Pro',cat:'Trekking-E-Bike, Topmodell der Serie, Modelljahr 2026',price:'Serie ab 3.399 €',
+   ideal:'Pendler und Tourenfahrer, auch auf Schotter und Waldwegen',
+   specs:[['Motor','Bosch Performance Line PX, 85 Nm (bis 90 Nm per App)'],['Akku','Bosch PowerTube 800 Wh'],['Display','Bosch Kiox 500 mit LED Remote'],['Schaltung','12 Gänge'],['Federgabel','100 mm'],['Extras','absenkbare Sattelstütze, Vierkolben-Scheibenbremsen'],['Rahmen','als Tiefeinsteiger und als Diamant']],
+   more:[['Yucatan X9','Einstieg in die Serie für 3.399 €'],['Yucatan X10','UVP 3.699 €']],
+   src:[['pedelec-elektro-fahrrad.de: Winora Yucatan 2026','https://pedelec-elektro-fahrrad.de/?p=661713'],['Bosch: Yucatan X12 Pro','https://www.bosch-ebike.com/en/ebikes/winora/yucatan-x12-pro_2978'],['web.de: Winora Yucatan','https://web.de/magazine/auto/winora-yucatan-vielseitiges-trekking-bike-alltag-abenteuer-42049594']]},
+  {k:'bbf',name:'BBF',color:'#7a5aa6',frame:'wave',
+   intro:'BBF entwickelt seit über 30 Jahren in Hoppegarten bei Berlin Räder für den Alltag, seit 2010 auch E-Bikes. Dazu kommen viele Kinder- und Jugendräder von 12 bis 26 Zoll.',
+   model:'Genf 1.0',cat:'City-E-Bike mit tiefem Einstieg',price:'Preis im Laden',
+   ideal:'Entspannt durch Haar und München, Einkauf und kurze Wege',
+   specs:[['Motor','Bosch Active Line, Mittelmotor'],['Akku','300 Wh'],['Schaltung','Shimano Nexus 8-Gang'],['Rahmen','Aluminium, Wave-Tiefeinsteiger']],
+   more:[['Kinder- und Jugendräder','Outrider, Rocky Rider, Streetrider in 12 bis 26 Zoll']],
+   src:[['Pedali: BBF City E-Bikes','https://www.pedali.de/e-bike/city-e-bike?marke=bbf-bike'],['Upway: BBF','https://upway.de/collections/bbf'],['Pedali: Marke BBF','https://www.pedali.de/marke/bbf-bike']]}
+];
+const brand=k=>BRANDS.find(b=>b.k===k);
+
+const PRICES=[
+  ['Basis-Check (Bremsen, Licht, Luft, Schrauben)','ab 29 €'],['Inspektion Fahrrad','ab 59 €'],['Inspektion E-Bike inkl. Diagnose','ab 89 €'],
+  ['Schlauch wechseln inkl. Material','ab 19 €'],['Mantel wechseln, zzgl. Material','ab 15 €'],['Bremsbeläge wechseln, je Rad','ab 25 €'],
+  ['Hydraulische Bremse entlüften, je Rad','ab 25 €'],['Schaltung einstellen','ab 15 €'],['Kette wechseln, zzgl. Material','ab 15 €'],
+  ['Laufrad zentrieren','ab 15 €'],['Akku- und Motordiagnose','ab 39 €'],['Software-Update E-Bike','ab 25 €'],['Hol- und Bringservice Haar','ab 15 €']
+];
+const priceTable=rows=>`<div class="prices" aria-label="Werkstattpreise">${rows.map(([a,b],i)=>`<div class="p"><span>${a}${i===0?'<span class="tag">Beispielpreise</span>':''}</span><span>${b}</span></div>`).join('')}</div>`;
+
+const L=(h,t,c='')=>`<a href="#${h}"${c?` class="${c}"`:''}>${t}</a>`;
+const cta=(t='Werkstatttermin anfragen',note='')=>`<div class="cta-band"><div><b>${t}</b><span>${note||'Online in einer Minute, telefonisch unter 089 46 55 99 oder außerhalb der Öffnungszeiten über unsere Telefon-KI.'}</span></div><div class="row">${L('kontakt','Termin anfragen','btn btn-green btn-lg')}<button type="button" class="btn btn-ghost btn-lg" data-open="status-ov">Reparaturstatus</button></div></div>`;
+const faq=list=>`<div class="faq">${list.map(([q,a])=>`<div><h3>${q}</h3><p>${a}</p></div>`).join('')}</div>`;
+const sec=(h,body,cls='')=>`<section class="wrap ${cls}"><h2>${h}</h2>${body}</section>`;
+const band=(h,body)=>`<div class="band">${sec(h,body)}</div>`;
+const pageHero=(h1,lead,kicker,extra='')=>`<div class="page-hero"><div class="wrap ph"><p class="kicker">${kicker}</p><h1>${h1}</h1><p class="lead-big">${lead}</p>${extra}</div></div>`;
+const cards=items=>`<div class="grid3">${items.map(([k,ic,t,d])=>`<a class="svc svc-link" href="#${k}">${ico(ic)}<h3>${t}</h3><p>${d}</p><span class="more">Mehr erfahren</span></a>`).join('')}</div>`;
+const checklist=items=>`<ul class="checklist">${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+const flow=items=>`<div class="flow">${items.map(([b,s],i)=>`<div${i===items.length-1?' class="green"':''}><p><b>${b}</b><span>${s}</span></p></div>`).join('')}</div>`;
+const HOURS_BLOCK=`<table class="hours" id="hours-table" aria-label="Öffnungszeiten"></table><p class="small-note" id="season-note"></p>`;
+const SITE_FORM=`<form class="card site-form" id="site-form">
+  <h3>Werkstatttermin anfragen</h3>
+  <label>Name<input id="s-name" required autocomplete="name"></label>
+  <label>Handy (für den Reparaturstatus)<input id="s-phone" required inputmode="tel" autocomplete="tel"></label>
+  <label>Ihr Rad<input id="s-bike" required placeholder="z. B. Victoria Trekking"></label>
+  <label>Was soll gemacht werden?<textarea id="s-note" rows="3"></textarea></label>
+  <label>Wunschtermin<select id="s-when"><option>Diese Woche</option><option>Nächste Woche</option><option>Bitte abholen (Hol- und Bringservice)</option></select></label>
+  <button type="submit" class="btn btn-green btn-lg">Anfrage senden</button>
+  <small class="small-note">Die Anfrage landet direkt als Auftrag in der Werkstatt-App.</small>
+</form>`;
+
+const SERVICES=[
+  ['werkstatt','werkstatt','Werkstatt','Reparatur mit oder ohne Termin, auch für ältere Räder und Räder aus dem Internet.'],
+  ['inspektion','check','Inspektion','Sicher in die Saison: Bremsen, Schaltung, Licht und Laufräder im Check.'],
+  ['e-bike-service','ebike','E-Bike-Service','Akku- und Motordiagnose, Software-Updates, Pflege für den Antrieb.'],
+  ['hol-und-bringservice','hol','Hol- und Bringservice','Wir holen Ihr Rad in Haar und Umgebung ab und bringen es repariert zurück.'],
+  ['neuraeder-e-bikes','rad','Neuräder & E-Bikes','City, Trekking, Tour, Mountainbike und E-Bike, mit Beratung und Probefahrt.'],
+  ['finanzierung','geld','Finanzierung','Ihr neues Rad in bequemen Raten, über unseren Partner Santander.'],
+  ['schutzbrief','schild','Fahrrad-Schutzbrief','Pannen- und Unfallhilfe mit 24-Stunden-Hotline, auch für E-Bikes.']
+];
+
+function flagshipCard(b){
+  return `<a class="bike-card" href="#marke-${b.k}">${bikeSvg(b.color,b.frame)}<div><small>${b.name}</small><h3>${b.model}</h3><p>${b.cat}</p><p class="spec-line">${b.specs.slice(0,2).map(s=>s[1]).join(' · ')}</p><span class="more">Zum Modell</span></div></a>`;
+}
+
+const BASE_FAQ_SCHEMA=list=>({'@type':'FAQPage',mainEntity:list.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))});
+
+const PAGES={};
+function page(k,o){PAGES[k]=Object.assign({key:k,crumb:[]},o)}
+
+/* Startseite */
+page('website',{nav:'',slug:'/',kw:'Fahrradladen Haar',
+  title:'Fahrradladen in Haar: Werkstatt & E-Bikes | BikeShop Haar',
+  desc:'Fahrradladen in Haar bei München: Neuräder, E-Bikes, Werkstatt mit und ohne Termin, Hol- und Bringservice. Reparaturstatus direkt aufs Handy.',
+  h1:'Ihr Fahrradladen in Haar. Verkauf, Werkstatt und E-Bike-Service.',
+  schema:'BikeStore',
+  body:()=>`
+  <div class="hero-site"><canvas id="hills" aria-hidden="true"></canvas><div class="hero-inner">
+    <div class="hero-copy"><h1>Ihr Fahrradladen in Haar. Verkauf, Werkstatt und E-Bike-Service.</h1>
+      <p>Direkt an der Münchener Straße 11. Wir reparieren alle Räder, auch ältere, und Sie sehen den Stand Ihrer Reparatur jederzeit auf dem Handy.</p>
+      <div class="row">${L('kontakt','Werkstatttermin anfragen','btn btn-ink btn-lg')}<button type="button" class="btn btn-ghost btn-lg" data-open="status-ov">Wie weit ist mein Rad?</button></div></div>
+    <aside class="today" aria-label="Heute geöffnet"><div class="open" id="open-now"><i></i><span></span></div><small id="open-sub"></small>
+      <div class="line"><span>Telefon</span><b>089 46 55 99</b></div><div class="line"><span>Adresse</span><b>Münchener Str. 11, 85540 Haar</b></div>
+      <div class="line"><span>Außerhalb der Zeiten</span><b>Telefon-KI nimmt Aufträge an</b></div></aside>
+  </div></div>
+  ${sec('Alles rund ums Rad, an einem Ort',`<p class="lead">Vom Platten bis zum neuen E-Bike: Beratung, Verkauf, Ersatzteile und Werkstatt aus einer Hand. Wählen Sie, wobei wir helfen dürfen.</p>${cards(SERVICES.slice(1))}`)}
+  ${band('Werkstatt: klare Preise, klarer Ablauf',`<p class="lead">Sie wissen vorher, was es ungefähr kostet. Kommt etwas dazu, fragen wir per App nach, bevor wir es machen.</p>
+    <div class="split">${priceTable(PRICES.slice(0,6))}${flow([['Rad bringen oder abholen lassen','Mit oder ohne Termin. Wir nehmen das Rad am Tablet auf, mit Fotos und Kostenrahmen.'],['Link aufs Handy','Per SMS bekommen Sie Ihren persönlichen Reparaturstatus. Keine App-Installation nötig.'],['Rückfragen per Klick','Ist mehr kaputt, sehen Sie Arbeit und Preis und geben frei. Oder Sie bitten um einen Rückruf.'],['Grün heißt: abholen','Sobald Ihr Rad fertig ist, springt der Status auf Grün.']])}</div>
+    <p class="mt">${L('werkstatt','Alle Werkstattpreise und Leistungen ansehen','link-arrow')}</p>`)}
+  ${sec('Unsere Flaggschiffe 2026',`<p class="lead">Eine Auswahl aus unseren Marken. Beratung und Probefahrt direkt vor dem Laden.</p><div class="bike-grid">${BRANDS.slice(0,3).map(flagshipCard).join('')}</div><p class="mt">${L('marken','Alle Marken und Modelle','link-arrow')}</p>`)}
+  ${band('Öffnungszeiten und Anfahrt',`<div class="contact"><div class="card"><h3 class="h3">So erreichen Sie uns</h3>${HOURS_BLOCK}</div><div class="card"><h3 class="h3">BikeShop Haar</h3><p>Münchener Str. 11<br>85540 Haar<br>Telefon 089 46 55 99</p><p class="mt">${L('kontakt','Kontakt und Anfahrt','link-arrow')}</p></div></div>`)}`});
+
+/* Werkstatt */
+page('werkstatt',{nav:'werkstatt',slug:'/werkstatt/',kw:'Fahrradwerkstatt Haar',crumb:[['werkstatt','Werkstatt']],
+  title:'Fahrradwerkstatt Haar: Reparatur & Preise | BikeShop Haar',
+  desc:'Fahrradwerkstatt in Haar: Reparatur und Inspektion für alle Räder und E-Bikes, mit oder ohne Termin. Preise vorab, Reparaturstatus aufs Handy.',
+  h1:'Fahrradwerkstatt in Haar: Reparatur für alle Räder',
+  faq:[['Brauche ich einen Termin?','Nein. Kleine Reparaturen wie einen Platten machen wir oft sofort. Mit Termin planen wir größere Arbeiten fest ein und Sie warten kürzer.'],
+       ['Reparieren Sie auch Räder, die nicht bei Ihnen gekauft wurden?','Ja, wir reparieren Räder aller Marken, auch ältere Modelle und Räder aus dem Internet.'],
+       ['Wie lange dauert eine Reparatur?','Das hängt von Arbeit und Ersatzteilen ab. Den geplanten Abholtermin sehen Sie in Ihrem Reparaturstatus auf dem Handy.'],
+       ['Was passiert, wenn mehr kaputt ist als gedacht?','Wir fragen vorher. Sie sehen Arbeit und Preis auf dem Handy und geben per Klick frei oder lehnen ab.']],
+  body:p=>`${pageHero(p.h1,'Wir bringen Ihr Rad wieder sicher auf die Straße: City- und Trekkingrad, Mountainbike, Kinderrad und E-Bike. Mit oder ohne Termin, auch für ältere Räder.','Werkstatt',`<div class="row mt">${L('kontakt','Termin anfragen','btn btn-ink btn-lg')}<button type="button" class="btn btn-ghost btn-lg" data-open="status-ov">Reparaturstatus</button></div>`)}
+  ${sec('Was wir für Sie reparieren',`<div class="two"><div>${checklist(['Platten, Schlauch und Mantel','Bremsen: Beläge, Seilzüge, hydraulische Scheibenbremsen','Schaltung: Ketten-, Naben- und elektronische Schaltung','Kette, Ritzel und Kettenblätter','Laufräder zentrieren, Speichen ersetzen','Licht und Elektrik','Federgabel und Sattelstütze: Prüfung und einfache Wartung'])}</div><div>${cards([['inspektion','check','Inspektion','Der große Check vor der Saison, mit festen Paketen.'],['e-bike-service','ebike','E-Bike-Service','Diagnose, Updates und Akkupflege.']]).replace('grid3','grid2')}</div></div>`)}
+  ${band('Werkstattpreise',`<p class="lead">Die häufigsten Arbeiten auf einen Blick. Material kommt je nach Teil dazu. Den genauen Preis sagen wir Ihnen bei der Annahme.</p>${priceTable(PRICES)}`)}
+  ${sec('So läuft Ihre Reparatur ab',flow([['Annahme','Am Tablet mit Fotos, Wunschtermin und Kostenrahmen „ohne Rückfrage bis …“.'],['Status-Link per SMS','Sie sehen jederzeit, ob Ihr Rad angenommen, in Prüfung oder in Arbeit ist.'],['Rückfrage mit Preis','Kommt etwas dazu, entscheiden Sie per Klick oder bitten um einen Rückruf.'],['Fertig in Grün','Status springt auf Grün, Sie holen ab oder wir bringen das Rad zurück.']]))}
+  ${band('Keine Zeit, das Rad zu bringen?',`<p class="lead">Mit dem ${L('hol-und-bringservice','Hol- und Bringservice')} holen wir Ihr Rad in Haar und Umgebung ab. Für neue Räder lohnt der Blick auf ${L('neuraeder-e-bikes','Neuräder und E-Bikes')}.</p>`)}
+  ${sec('Häufige Fragen zur Werkstatt',faq(p.faq))}${cta()}`});
+
+/* Inspektion */
+page('inspektion',{nav:'werkstatt',slug:'/werkstatt/inspektion/',kw:'Fahrrad Inspektion Haar',crumb:[['werkstatt','Werkstatt'],['inspektion','Inspektion']],
+  title:'Fahrrad-Inspektion in Haar | BikeShop Haar',
+  desc:'Fahrrad- und E-Bike-Inspektion in Haar: feste Pakete, klare Preise, Status aufs Handy. Jetzt im Winter ohne Wartezeit vor dem Frühjahr.',
+  h1:'Fahrrad-Inspektion in Haar: sicher in die Saison',
+  faq:[['Wie oft sollte mein Rad zur Inspektion?','Wir empfehlen einmal im Jahr, bei vielen Kilometern oder täglichem Pendeln zweimal. E-Bikes profitieren besonders, weil Bremsen und Kette stärker belastet werden.'],
+       ['Wann ist der beste Zeitpunkt?','Im Winter. Im Frühjahr sind die Werkstätten voll, im Winter ist Ihr Rad schneller fertig und zum Saisonstart bereit.'],
+       ['Was ist im Preis enthalten?','Die Arbeitszeit für alle Punkte des Pakets. Verschleißteile wie Beläge oder Kette kommen nur nach Ihrer Freigabe dazu.'],
+       ['Bekomme ich ein Protokoll?','Ja, die geprüften Punkte und unsere Empfehlungen stehen in Ihrem Reparaturstatus.']],
+  body:p=>`${pageHero(p.h1,'Eine Inspektion im Jahr hält Ihr Rad sicher und spart teure Folgeschäden. Wählen Sie das Paket, das zu Ihrem Rad passt.','Werkstatt › Inspektion')}
+  ${sec('Unsere Inspektionspakete',`<div class="grid3 pkgs">
+    <div class="pkg"><small>Für den schnellen Check</small><h3>Basis-Check</h3><p class="pp">ab 29 €</p>${checklist(['Bremsen prüfen und einstellen','Licht und Klingel','Reifendruck und Reifenzustand','Schrauben nachziehen','Probefahrt'])}</div>
+    <div class="pkg hl"><small>Unsere Empfehlung</small><h3>Inspektion Fahrrad</h3><p class="pp">ab 59 €</p>${checklist(['Alles aus dem Basis-Check','Schaltung einstellen','Kette reinigen, ölen, Verschleiß messen','Laufräder auf Rundlauf prüfen','Lager und Steuersatz prüfen','Protokoll im Reparaturstatus'])}</div>
+    <div class="pkg"><small>Für Pedelecs</small><h3>Inspektion E-Bike</h3><p class="pp">ab 89 €</p>${checklist(['Alles aus der Inspektion','Fehlerspeicher auslesen','Software-Update, wenn verfügbar','Akku-Zustand prüfen','Steckverbindungen und Kabel'])}</div>
+  </div><p class="small-note mt">Beispielpreise. Verschleißteile nur nach Ihrer Freigabe.</p>`)}
+  ${band('Winter-Inspektion: jetzt ohne Wartezeit',`<p class="lead">Im Frühjahr wollen alle gleichzeitig los. Bringen Sie Ihr Rad im Winter, dann ist es zum ersten warmen Tag fertig. Auf Wunsch holen wir es mit dem ${L('hol-und-bringservice','Hol- und Bringservice')} ab.</p>`)}
+  ${sec('Termin für die Inspektion',`<div class="contact"><div>${checklist(['Reparaturstatus per SMS','Rückfragen mit Preis per Klick','Abholung zu unseren Öffnungszeiten'])}<p class="mt">Mehr zur ${L('werkstatt','Werkstatt')} und zum ${L('e-bike-service','E-Bike-Service')}.</p></div>${SITE_FORM}</div>`)}
+  ${band('Häufige Fragen zur Inspektion',faq(p.faq))}`});
+
+/* E-Bike-Service */
+page('e-bike-service',{nav:'werkstatt',slug:'/werkstatt/e-bike-service/',kw:'E-Bike Service Haar',crumb:[['werkstatt','Werkstatt'],['e-bike-service','E-Bike-Service']],
+  title:'E-Bike-Service & Akku-Check in Haar | BikeShop Haar',
+  desc:'E-Bike-Service in Haar: Diagnose für Motor und Akku, Software-Updates, Inspektion und Reparatur für Pedelecs. Mit Reparaturstatus aufs Handy.',
+  h1:'E-Bike-Service in Haar: Motor, Akku und Software',
+  faq:[['Welche Antriebe warten Sie?','Wir arbeiten mit Diagnose-Software für die gängigen Mittelmotor-Systeme. Sagen Sie uns bei der Anfrage, welchen Antrieb Ihr E-Bike hat.'],
+       ['Mein Motor setzt manchmal aus. Was tun?','Oft liegt es an Steckverbindungen, Sensoren oder der Software. Mit der Diagnose lesen wir den Fehlerspeicher aus und finden die Ursache.'],
+       ['Wie lagere ich den Akku im Winter?','Trocken, bei Zimmertemperatur und nur teilweise geladen. Laden Sie ihn alle paar Monate nach. Wir prüfen den Zustand gern bei der Inspektion.'],
+       ['Kann mein Motor per Update stärker werden?','Bei manchen Modellen bieten Hersteller Software-Updates mit mehr Drehmoment an. Wir prüfen, ob das für Ihr Rad verfügbar ist.']],
+  body:p=>`${pageHero(p.h1,'Ein E-Bike ist Fahrrad und Elektronik zugleich. Wir kümmern uns um beides: von Bremsen und Kette bis zu Motor, Akku und Software.','Werkstatt › E-Bike-Service')}
+  ${sec('Unsere Leistungen für E-Bikes',`<div class="grid3">
+    <div class="svc">${ico('ebike')}<h3>Diagnose</h3><p>Fehlerspeicher auslesen, Sensoren und Kabel prüfen, Ursache finden statt raten.</p></div>
+    <div class="svc">${ico('check')}<h3>Software-Updates</h3><p>Aktuelle Software für Motor und Display, oft mit besserem Fahrgefühl oder neuen Funktionen.</p></div>
+    <div class="svc">${ico('geld')}<h3>Akku-Check</h3><p>Zustand und Kapazität prüfen, Tipps für Lagerung und längere Lebensdauer.</p></div>
+    <div class="svc">${ico('werkstatt')}<h3>Bremsen für E-Bikes</h3><p>E-Bikes sind schwerer und schneller. Beläge und Scheiben verschleißen deshalb früher.</p></div>
+    <div class="svc">${ico('teile')}<h3>Kette und Antrieb</h3><p>Der Motor belastet Kette und Ritzel stärker. Rechtzeitig tauschen schont den Antrieb.</p></div>
+    <div class="svc">${ico('hol')}<h3>Abholung</h3><p>Schwere E-Bikes holen wir mit dem ${L('hol-und-bringservice','Hol- und Bringservice')} ab.</p></div>
+  </div>`)}
+  ${band('Preise E-Bike-Service',priceTable([['Akku- und Motordiagnose','ab 39 €'],['Software-Update E-Bike','ab 25 €'],['Inspektion E-Bike inkl. Diagnose','ab 89 €'],['Bremsbeläge wechseln, je Rad','ab 25 €']]))}
+  ${sec('Neues E-Bike gesucht?',`<p class="lead">Wir beraten herstellerübergreifend. Unsere ${L('marken','Marken und Flaggschiffe')} zeigen, welche Antriebe und Akkus 2026 aktuell sind. Mit ${L('finanzierung','Finanzierung')} in Raten.</p>`)}
+  ${band('Häufige Fragen zum E-Bike-Service',faq(p.faq))}${cta('E-Bike-Diagnose anfragen')}`});
+
+/* Hol- und Bringservice */
+page('hol-und-bringservice',{nav:'werkstatt',slug:'/werkstatt/hol-und-bringservice/',kw:'Fahrrad Hol- und Bringservice Haar',crumb:[['werkstatt','Werkstatt'],['hol-und-bringservice','Hol- und Bringservice']],
+  title:'Hol- und Bringservice für Fahrräder | BikeShop Haar',
+  desc:'Fahrrad oder E-Bike reparieren lassen, ohne selbst zu fahren: Wir holen Ihr Rad in Haar und Umgebung ab und bringen es repariert zurück.',
+  h1:'Hol- und Bringservice: Wir holen Ihr Rad ab',
+  faq:[['In welchem Gebiet holen Sie ab?','In Haar mit Gronsdorf, Salmdorf, Ottendichl und Eglfing sowie in den Nachbarorten. Weitere Orte auf Anfrage.'],
+       ['Muss ich zu Hause sein?','Nicht unbedingt. Wir vereinbaren ein Zeitfenster. Das Rad kann auch abgeschlossen an einem vereinbarten Ort stehen.'],
+       ['Was kostet der Service?','In Haar ab 15 €, in den Nachbarorten je nach Entfernung. Den Preis nennen wir bei der Anfrage.'],
+       ['Holen Sie auch schwere E-Bikes ab?','Ja, gerade für E-Bikes und Lastenräder lohnt sich der Service besonders.']],
+  body:p=>`${pageHero(p.h1,'Ihr Rad ist kaputt, das Auto zu klein oder die Zeit zu knapp? Wir holen Ihr Fahrrad oder E-Bike ab, reparieren es und bringen es zurück.','Werkstatt › Hol- und Bringservice')}
+  ${sec('So funktioniert es',flow([['Anfragen','Online oder telefonisch. Wählen Sie bei der Anfrage „Bitte abholen“.'],['Zeitfenster bekommen','Wir melden uns mit einem Abholtermin, auf Wunsch per SMS.'],['Reparatur verfolgen','Status, Rückfragen und Freigaben laufen wie gewohnt über Ihr Handy.'],['Zurückbringen','Ist der Status grün, bringen wir das Rad zum vereinbarten Termin zurück.']]))}
+  ${band('Abholgebiet und Preise',`<div class="two"><div>${checklist(['Haar mit Gronsdorf, Salmdorf, Ottendichl, Eglfing','Feldkirchen, Vaterstetten, Grasbrunn','München-Trudering und Riem auf Anfrage'])}</div>${priceTable([['Hol- und Bringservice Haar','ab 15 €'],['Nachbarorte','nach Entfernung']])}</div>`)}
+  ${sec('Jetzt Abholung anfragen',`<div class="contact"><div><p class="lead">Wählen Sie im Formular „Bitte abholen“. Ideal kombiniert mit einer ${L('inspektion','Inspektion')} oder dem ${L('e-bike-service','E-Bike-Service')}.</p></div>${SITE_FORM}</div>`)}
+  ${band('Häufige Fragen zum Hol- und Bringservice',faq(p.faq))}`});
+
+/* Leistungen */
+page('leistungen',{nav:'leistungen',slug:'/leistungen/',kw:'Fahrradladen Leistungen Haar',crumb:[['leistungen','Leistungen']],
+  title:'Leistungen rund ums Fahrrad in Haar | BikeShop Haar',
+  desc:'Alle Leistungen von BikeShop Haar: Werkstatt, Inspektion, E-Bike-Service, Hol- und Bringservice, Neuräder, Finanzierung und Fahrrad-Schutzbrief.',
+  h1:'Unsere Leistungen rund ums Fahrrad',
+  body:p=>`${pageHero(p.h1,'Ob Reparatur, neues E-Bike oder Absicherung für unterwegs: Hier finden Sie alles, was BikeShop Haar für Sie tun kann.','Leistungen')}
+  ${sec('Werkstatt und Service',cards(SERVICES.slice(0,4)))}
+  ${band('Kaufen, finanzieren, absichern',cards(SERVICES.slice(4)))}
+  ${sec('Ersatzteile, Zubehör und Beratung',`<div class="two"><p class="lead">Schläuche, Mäntel, Beleuchtung, Schlösser, Helme, Taschen und Kindersitze: Wir führen Ersatzteile und Zubehör für alle gängigen Hersteller. Was nicht vorrätig ist, bestellen wir.</p>${checklist(['Beratung zu Rahmengröße und Sitzposition','Zubehör passend zum Rad montiert','Ersatzteile für ältere Räder auf Bestellung'])}</div>`)}${cta('Fragen zu unseren Leistungen?')}`});
+
+/* Neuräder & E-Bikes */
+page('neuraeder-e-bikes',{nav:'neuraeder-e-bikes',slug:'/neuraeder-e-bikes/',kw:'E-Bike kaufen Haar',crumb:[['leistungen','Leistungen'],['neuraeder-e-bikes','Neuräder & E-Bikes']],
+  title:'E-Bikes & Fahrräder kaufen in Haar | BikeShop Haar',
+  desc:'E-Bike oder Fahrrad kaufen in Haar: City, Trekking, Tour, Mountainbike und Kinderrad. Persönliche Beratung, Probefahrt, Finanzierung und Werkstatt.',
+  h1:'Neuräder und E-Bikes in Haar: beraten, probefahren, mitnehmen',
+  faq:[['Kann ich probefahren?','Ja, direkt vor dem Laden. Für längere Probefahrten sprechen Sie uns an.'],
+       ['Welche Rahmengröße brauche ich?','Das hängt von Körpergröße und Schrittlänge ab. Wir messen im Laden aus und stellen Sattel und Lenker passend ein.'],
+       ['Mittelmotor oder Nabenmotor?','Ein Mittelmotor sitzt am Tretlager, fährt sich natürlich und ist ideal für Steigungen und Touren. Die meisten unserer Modelle haben einen Mittelmotor.'],
+       ['Wie viel Akku brauche ich?','Für Stadt und kurze Wege reichen 300 bis 500 Wh. Für lange Touren mit Gepäck sind 600 bis 800 Wh komfortabler.']],
+  body:p=>`${pageHero(p.h1,'City-, Trekking- und Tourenräder, Mountainbikes, E-Bikes und Kinderräder. Wir nehmen uns Zeit für die Beratung, und nach dem Kauf bleibt die Werkstatt direkt nebenan.','Neuräder & E-Bikes')}
+  ${sec('Welches Rad passt zu Ihnen?',`<div class="grid3">
+    <div class="svc">${ico('rad')}<h3>City-E-Bike</h3><p>Tiefer Einstieg, aufrechte Haltung, oft mit Nabenschaltung und Riemen. Für Alltag und Einkauf.</p></div>
+    <div class="svc">${ico('rad')}<h3>Trekking-E-Bike</h3><p>Federgabel, großer Akku, Gepäckträger. Für Pendeln und lange Touren.</p></div>
+    <div class="svc">${ico('rad')}<h3>E-SUV und E-MTB</h3><p>Breite Reifen, mehr Federweg. Für Schotter, Waldwege und Berge.</p></div>
+    <div class="svc">${ico('rad')}<h3>Fahrrad ohne Motor</h3><p>City, Trekking, Tour und Mountainbike in vielen Größen.</p></div>
+    <div class="svc">${ico('rad')}<h3>Kinder- und Jugendräder</h3><p>Von 12 bis 26 Zoll, damit die ganze Familie mitfährt.</p></div>
+    <div class="svc">${ico('check')}<h3>Kaufberatung</h3><p>Rahmengröße, Sitzposition, Motor und Akku: Wir finden das passende Rad.</p></div>
+  </div>`)}
+  ${band('Unsere Flaggschiffe 2026',`<div class="bike-grid">${BRANDS.map(flagshipCard).join('')}</div><p class="small-note mt">Herstellerangaben, Stand 2026. Verfügbarkeit und Ausstattung im Laden erfragen.</p>`)}
+  ${sec('Darauf achten wir bei der Beratung',`<div class="two">${checklist(['Motor: Mittelmotor für natürliches Fahrgefühl und Steigungen','Akku: 300 Wh für Stadt, 800 Wh für lange Touren','Rahmen: Wave, Trapez oder Diamant','Schaltung: Kette oder wartungsarme Nabe mit Riemen','Zuladung: zulässiges Gesamtgewicht für Fahrer, Gepäck und Anhänger'])}<div><p class="lead">Teure Räder müssen nicht auf einmal bezahlt werden: ${L('finanzierung','Finanzierung in Raten')}. Absichern für unterwegs: ${L('schutzbrief','Fahrrad-Schutzbrief')}.</p></div></div>`)}
+  ${band('Häufige Fragen zum Radkauf',faq(p.faq))}${cta('Beratung oder Probefahrt anfragen','Kommen Sie vorbei oder fragen Sie vorab an, welches Modell Sie testen möchten.')}`});
+
+/* Finanzierung */
+page('finanzierung',{nav:'leistungen',slug:'/finanzierung/',kw:'E-Bike finanzieren Haar',crumb:[['leistungen','Leistungen'],['finanzierung','Finanzierung']],
+  title:'Fahrrad & E-Bike finanzieren in Haar | BikeShop Haar',
+  desc:'E-Bike oder Fahrrad in Raten bezahlen: Finanzierung über unseren Partner Santander, direkt im Laden in Haar beantragt. Ratenrechner und Ablauf.',
+  h1:'Fahrrad und E-Bike finanzieren: in Raten zum neuen Rad',
+  faq:[['Mit welcher Bank arbeiten Sie zusammen?','Mit der Santander Bank. Den Antrag stellen wir gemeinsam mit Ihnen im Laden.'],
+       ['Was brauche ich für den Antrag?','In der Regel Personalausweis, Bankverbindung und Angaben zum Einkommen. Wir sagen Ihnen vorab, was Sie mitbringen sollen.'],
+       ['Kann ich auch Zubehör mitfinanzieren?','Sprechen Sie uns an. Oft lassen sich Helm, Schloss oder Schutzbrief in den Kauf einrechnen.'],
+       ['Wie hoch ist der Zins?','Die Konditionen legt die Bank fest und sie ändern sich. Wir erstellen Ihnen ein persönliches Angebot.']],
+  body:p=>`${pageHero(p.h1,'Ein hochwertiges E-Bike kostet schnell mehrere tausend Euro. Mit einer Finanzierung über unseren Partner Santander fahren Sie sofort und zahlen in Raten.','Leistungen › Finanzierung')}
+  ${sec('So einfach geht es',flow([['Rad aussuchen','Beratung und Probefahrt im Laden.'],['Angebot erstellen','Wir rechnen mit Ihnen Laufzeit und Rate durch.'],['Antrag im Laden','Gemeinsam ausgefüllt, Entscheidung meist schnell.'],['Losfahren','Rad mitnehmen, Raten bequem monatlich zahlen.']]))}
+  ${band('Ratenrechner',`<div class="calc"><label>Kaufpreis in €<input id="fin-price" type="number" min="500" step="100" value="3800"></label><label>Laufzeit<select id="fin-months"><option value="12">12 Monate</option><option value="24">24 Monate</option><option value="36" selected>36 Monate</option><option value="48">48 Monate</option></select></label><div class="calc-out"><small>Rate ohne Zinsen gerechnet</small><b id="fin-rate"></b></div></div><p class="small-note mt">Nur zur Orientierung. Die echte Rate mit Zinsen steht im Angebot der Santander Bank.</p>`)}
+  ${sec('Passende Räder',`<div class="bike-grid">${BRANDS.slice(0,3).map(flagshipCard).join('')}</div>`)}
+  ${band('Häufige Fragen zur Finanzierung',faq(p.faq))}${cta('Finanzierungsangebot anfragen','Wir stellen Ihnen gern ein persönliches Angebot zusammen.')}`});
+
+/* Schutzbrief */
+page('schutzbrief',{nav:'leistungen',slug:'/fahrrad-schutzbrief/',kw:'Fahrrad Schutzbrief',crumb:[['leistungen','Leistungen'],['schutzbrief','Fahrrad-Schutzbrief']],
+  title:'Fahrrad-Schutzbrief mit Pannenhilfe | BikeShop Haar',
+  desc:'ROLAND Fahrrad-Schutzbrief bei BikeShop Haar: Pannen- und Unfallhilfe, Abschleppdienst, Ersatzrad und 24-Stunden-Hotline für Fahrrad und E-Bike.',
+  h1:'Fahrrad-Schutzbrief: Hilfe, wenn unterwegs etwas passiert',
+  faq:[['Für welche Räder gilt der Schutzbrief?','Für Fahrräder, E-Bikes und Pedelecs, die nicht gewerblich genutzt werden und nicht versicherungs- oder zulassungspflichtig sind.'],
+       ['Gilt er für die ganze Familie?','Ja, mit dem Familientarif, egal ob Sie gemeinsam oder getrennt unterwegs sind.'],
+       ['Ersetzt der Schutzbrief eine Diebstahlversicherung?','Nein. Der Schutzbrief hilft bei Panne und Unfall unterwegs. Gegen Diebstahl schützt eine eigene Fahrradversicherung.'],
+       ['Was kostet der Schutzbrief?','Den aktuellen Tarif nennen wir Ihnen im Laden oder am Telefon.']],
+  body:p=>`${pageHero(p.h1,'Platten auf der Tour, Kette gerissen, Unfall im Urlaub: Mit dem ROLAND Fahrrad-Schutzbrief ist Hilfe nur einen Anruf entfernt, rund um die Uhr.','Leistungen › Fahrrad-Schutzbrief')}
+  ${sec('Was der Schutzbrief leistet',`<div class="grid3">
+    <div class="svc">${ico('schild')}<h3>Pannen- und Unfallhilfe</h3><p>Hilfe vor Ort oder Abschleppen zur nächsten Werkstatt.</p></div>
+    <div class="svc">${ico('rad')}<h3>Ersatzfahrrad</h3><p>Bei einer Panne kommen Sie trotzdem weiter.</p></div>
+    <div class="svc">${ico('hol')}<h3>Weiter- oder Rückfahrt</h3><p>Organisation nach einem Unfall, auch Rücktransport des Rads.</p></div>
+    <div class="svc">${ico('geld')}<h3>Übernachtung und Notfallgeld</h3><p>Übernachtungskosten und Notfall-Bargeld im Ausland.</p></div>
+    <div class="svc">${ico('check')}<h3>24-Stunden-Hotline</h3><p>Dazu digitale Pannenhilfe mit Standortbestimmung per GPS.</p></div>
+    <div class="svc">${ico('werkstatt')}<h3>Werkstattvermittlung</h3><p>Wir oder eine Partnerwerkstatt in Ihrer Nähe helfen weiter.</p></div>
+  </div>`)}
+  ${band('Für wen lohnt sich der Schutzbrief?',`<div class="two">${checklist(['Tourenfahrer und Radurlauber','Pendler, die auf ihr Rad angewiesen sind','Familien mit mehreren Rädern','Besitzer teurer E-Bikes'])}<p class="lead">Ideal beim Kauf eines ${L('neuraeder-e-bikes','neuen Rads')}. Kombinierbar mit der ${L('finanzierung','Finanzierung')}.</p></div>`)}
+  ${sec('Häufige Fragen zum Schutzbrief',faq(p.faq))}${cta('Schutzbrief abschließen','Wir beraten Sie im Laden oder telefonisch unter 089 46 55 99.')}`});
+
+/* Marken */
+page('marken',{nav:'marken',slug:'/marken/',kw:'E-Bike Marken Haar',crumb:[['marken','Marken']],
+  title:'E-Bike- und Fahrradmarken in Haar | BikeShop Haar',
+  desc:'BESV, Victoria, Kettler, Haibike, Winora und BBF bei BikeShop Haar: Flaggschiff-Modelle 2026, Beratung, Probefahrt und Werkstatt für alle Marken.',
+  h1:'Unsere Marken: E-Bikes und Fahrräder in Haar',
+  body:p=>`${pageHero(p.h1,'Wir führen ausgewählte Marken für Alltag, Tour und Sport. Zu jeder Marke zeigen wir ein Flaggschiff-Modell 2026. Beratung, Probefahrt und Werkstatt gibt es für alle.','Marken')}
+  ${sec('Marken und Flaggschiffe',`<div class="brand-list">${BRANDS.map(b=>`<a class="brand-row" href="#marke-${b.k}"><span class="b-name" style="--bc:${b.color}">${b.name}</span>${bikeSvg(b.color,b.frame)}<span class="b-body"><b>${b.model}</b><span>${b.cat}</span><span class="spec-line">${b.specs.slice(0,2).map(s=>s[1]).join(' · ')}</span></span><span class="b-price">${b.price}</span></a>`).join('')}</div>`)}
+  ${band('Weitere Marken',`<p class="lead">Außerdem im Sortiment oder auf Bestellung: Sinus, Merida und Centurion. Ersatzteile und Zubehör führen wir für alle gängigen Hersteller.</p>`)}${cta('Probefahrt anfragen','Sagen Sie uns, welches Modell Sie testen möchten. Wir halten es bereit.')}`});
+
+/* Markenseiten */
+BRANDS.forEach(b=>page('marke-'+b.k,{nav:'marken',slug:`/marken/${b.k}/`,kw:`${b.name} E-Bike Haar`,crumb:[['marken','Marken'],['marke-'+b.k,b.name]],brand:b,
+  title:`${b.name} E-Bikes in Haar kaufen | BikeShop Haar`,
+  desc:`${b.name} bei BikeShop Haar: Flaggschiff ${b.model} mit ${b.specs[0][1].split(',')[0]}. Beratung, Probefahrt und Werkstatt-Service in Haar.`,
+  h1:`${b.name} E-Bikes in Haar`,
+  faq:[[`Kann ich das ${b.name} ${b.model} probefahren?`,'Ja. Fragen Sie vorab an, dann halten wir die passende Rahmengröße bereit.'],
+       [`Warten Sie auch ${b.name}-Räder, die woanders gekauft wurden?`,'Ja, unsere Werkstatt repariert und wartet alle Marken.']],
+  body:p=>`${pageHero(p.h1,b.intro,'Marken › '+b.name)}
+  <section class="wrap"><div class="flag">
+    <div class="flag-fig" style="--bc:${b.color}">${bikeSvg(b.color,b.frame,true)}<small>Illustration. Originalfotos stellt der Hersteller bereit.</small></div>
+    <div><p class="kicker">Flaggschiff 2026</p><h2>${b.name} ${b.model}</h2><p class="lead">${b.cat}</p>
+      <table class="spec">${b.specs.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}<tr><th>Ideal für</th><td>${b.ideal}</td></tr><tr><th>Preis</th><td><b>${b.price}</b></td></tr></table>
+      <p class="small-note">Herstellerangaben, Stand 2026. Ausstattung und Preis können je Variante abweichen.</p>
+      <div class="row mt">${`<a href="#kontakt" class="btn btn-ink btn-lg" data-prefill="Probefahrt ${b.name} ${b.model}">Probefahrt anfragen</a>`}${L('finanzierung','In Raten finanzieren','btn btn-ghost btn-lg')}</div></div>
+  </div></section>
+  ${b.more.length?band(`Weitere ${b.name}-Modelle`,`<div class="grid2">${b.more.map(([m,d])=>`<div class="svc"><h3>${b.name} ${m}</h3><p>${d}</p></div>`).join('')}</div>`):''}
+  ${sec(`Werkstatt-Service für ${b.name}`,`<p class="lead">Inspektion, Reparatur und ${L('e-bike-service','E-Bike-Service')} für Ihr ${b.name}-Rad. Auf Wunsch mit ${L('hol-und-bringservice','Hol- und Bringservice')}.</p>`)}
+  ${band('Andere Marken ansehen',`<div class="chips">${BRANDS.filter(x=>x!==b).map(x=>L('marke-'+x.k,x.name,'chip-link')).join('')}${L('marken','Alle Marken','chip-link')}</div>`)}
+  ${sec('Häufige Fragen',faq(p.faq))}`}));
+
+/* Kontakt */
+page('kontakt',{nav:'kontakt',slug:'/kontakt/',kw:'BikeShop Haar Kontakt',crumb:[['kontakt','Kontakt']],
+  title:'Kontakt & Öffnungszeiten | BikeShop Haar',
+  desc:'BikeShop Haar, Münchener Str. 11, 85540 Haar. Öffnungszeiten, Anfahrt, Telefon 089 46 55 99 und Werkstatttermin online anfragen.',
+  h1:'Kontakt, Öffnungszeiten und Anfahrt',
+  body:p=>`${pageHero(p.h1,'Kommen Sie vorbei, rufen Sie an oder fragen Sie Ihren Werkstatttermin online an. Außerhalb der Öffnungszeiten nimmt unsere Telefon-KI Aufträge und Rückrufwünsche an.','Kontakt')}
+  <section class="wrap"><div class="contact">
+    <div class="card"><h3 class="h3">BikeShop Haar</h3><p>Inh. Waldemar Klasman<br>Münchener Str. 11<br>85540 Haar</p><p class="mt">Telefon <b>089 46 55 99</b></p>
+      <h3 class="h3 mt">Öffnungszeiten</h3>${HOURS_BLOCK}
+      <div class="map">Karte von Google Maps<br>wird erst nach Ihrer Zustimmung geladen (Datenschutz).</div></div>
+    ${SITE_FORM}
+  </div></section>${cta('Wie weit ist mein Rad?','Mit Auftragsnummer oder Handynummer sehen Sie den Stand Ihrer Reparatur.')}`});
+
+/* ---------- Rendern ---------- */
+let prefillNote='';
+function crumbsHtml(p){
+  if(!p.crumb.length) return '';
+  return `<nav class="crumbs" aria-label="Brotkrumen"><div class="wrap-in">${L('website','Start')}${p.crumb.map(([k,t],i)=>' › '+(i===p.crumb.length-1?`<span aria-current="page">${t}</span>`:L(k,t))).join('')}</div></nav>`;
+}
+function schemaFor(p){
+  const biz={'@context':'https://schema.org','@type':'BikeStore',name:'BikeShop Haar',telephone:'+49 89 465599',url:'https://www.'+SITE+'/',
+    address:{'@type':'PostalAddress',streetAddress:'Münchener Str. 11',postalCode:'85540',addressLocality:'Haar',addressCountry:'DE'}};
+  const g=[biz];
+  if(p.crumb.length) g.push({'@type':'BreadcrumbList',itemListElement:[['website','Start'],...p.crumb].map(([k,t],i)=>({'@type':'ListItem',position:i+1,name:t,item:'https://www.'+SITE+(PAGES[k].slug)}))});
+  if(p.faq) g.push(BASE_FAQ_SCHEMA(p.faq));
+  if(p.schemaExtra) g.push(p.schemaExtra);
+  if(p.brand) g.push({'@type':'Product',name:`${p.brand.name} ${p.brand.model}`,brand:{'@type':'Brand',name:p.brand.name},description:p.brand.cat});
+  if(['inspektion','e-bike-service','hol-und-bringservice','werkstatt'].includes(p.key)) g.push({'@type':'Service',name:p.h1,areaServed:'Haar',provider:{'@type':'BikeStore',name:'BikeShop Haar'}});
+  return g;
+}
+function seoBoxHtml(p){
+  const main=document.getElementById('site-main');
+  const words=(main.innerText||'').split(/\s+/).filter(Boolean).length;
+  const links=main.querySelectorAll('a[href^="#"]').length;
+  const tl=p.title.length, dl=p.desc.length;
+  const ok=(c,t)=>`<span class="${c?'ok':'warn'}">${t}</span>`;
+  const types=schemaFor(p).map(x=>x['@type']).join(', ');
+  const srcs=p.brand?p.brand.src:(p.key==='marken'||p.key==='neuraeder-e-bikes')?BRANDS.flatMap(b=>b.src).slice(0,8):null;
+  return `<div class="wrap seo-in">
+    <div class="seo-head"><b>SEO-Ansicht dieser Seite</b><span>Nur in der Demo sichtbar</span></div>
+    <div class="seo-grid">
+      <div class="serp" aria-label="Vorschau im Google-Suchergebnis"><small>So erscheint die Seite bei Google</small>
+        <div class="serp-url">www.${SITE} › ${p.slug.split('/').filter(Boolean).join(' › ')||'Start'}</div>
+        <div class="serp-title">${p.title}</div><div class="serp-desc">${p.desc}</div></div>
+      <table class="seo-t">
+        <tr><th>Adresse</th><td>${SITE}${p.slug}</td></tr>
+        <tr><th>Fokus-Suchbegriff</th><td>${p.kw}</td></tr>
+        <tr><th>Seitentitel</th><td>${ok(tl<=60,tl+' Zeichen')} (Ziel bis 60)</td></tr>
+        <tr><th>Beschreibung</th><td>${ok(dl>=120&&dl<=160,dl+' Zeichen')} (Ziel 120–160)</td></tr>
+        <tr><th>Hauptüberschrift</th><td>${p.h1}</td></tr>
+        <tr><th>Umfang</th><td>${words} Wörter, ${links} interne Links</td></tr>
+        <tr><th>Strukturierte Daten</th><td>${types}</td></tr>
+      </table>
+    </div>
+    ${srcs?`<p class="seo-src"><b>Quellen der Modelldaten:</b> ${srcs.map(([t,u])=>`<a href="${u}">${t}</a>`).join(' · ')}. Modelle und Preise vor dem Termin mit dem Sortiment des Ladens abgleichen.</p>`:''}
+    <p class="seo-src">Heute auf der alten Seite: ${p.key==='website'?'Titel „www.bikeshophaar.de - BikeShop Haar“, Beschreibung über 500 Zeichen, H1 zur Finanzierung.':'diese Seite gibt es nicht als eigene Seite oder nur ohne Beschreibung.'}</p>
+  </div>`;
+}
+function renderSite(k){
+  const p=PAGES[k]||PAGES.website;
+  const main=document.getElementById('site-main');
+  main.innerHTML=crumbsHtml(p)+p.body(p);
+  document.querySelectorAll('.site-nav .links a').forEach(a=>a.setAttribute('aria-current',a.dataset.nav===p.nav?'page':'false'));
+  document.title=p.title;
+  let md=document.querySelector('meta[name="description"]'); if(!md){md=document.createElement('meta');md.name='description';document.head.appendChild(md)} md.content=p.desc;
+  let ld=document.getElementById('ld'); if(!ld){ld=document.createElement('script');ld.type='application/ld+json';ld.id='ld';document.head.appendChild(ld)}
+  ld.textContent=JSON.stringify({'@context':'https://schema.org','@graph':schemaFor(p)});
+  document.getElementById('seo-box').innerHTML=seoBoxHtml(p);
+  renderHours(); drawHills(); updateRate(); observeReveal(); setBarH(); window.scrollTo(0,0);
+  if(prefillNote){const n=document.getElementById('s-note'); if(n){n.value=prefillNote} prefillNote=''}
+}
+function renderHours(){
+  const s=season(), info=openInfo(), el=document.getElementById('open-now');
+  if(el){el.classList.toggle('closed',!info.open); el.querySelector('span').textContent=info.txt;
+    document.getElementById('open-sub').textContent = info.open ? 'Kommen Sie vorbei, auch ohne Termin.' : 'Reparatur anmelden oder Status abfragen geht trotzdem: online oder per Telefon-KI.';}
+  const ht=document.getElementById('hours-table'); if(!ht) return;
+  const today=new Date().getDay();
+  ht.innerHTML=[1,2,3,4,5,6,0].map(i=>{const sl=HOURS[s].d[i]; return `<tr class="${i===today?'now':''}"><td>${DAYS[i]}</td><td>${sl.length?sl.map(([a,b])=>`${fmtH(a)}–${fmtH(b)}`).join(' und '):'geschlossen'}</td></tr>`}).join('');
+  document.getElementById('season-note').textContent=`Aktuell gelten die Zeiten für ${HOURS[s].name}.`;
+}
+function updateRate(){
+  const pr=document.getElementById('fin-price'), m=document.getElementById('fin-months'), o=document.getElementById('fin-rate');
+  if(!pr||!o) return; const r=(Number(pr.value)||0)/Number(m.value);
+  o.textContent=r.toLocaleString('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0})+' pro Monat';
+}
+document.addEventListener('input',e=>{if(['fin-price','fin-months'].includes(e.target.id)) updateRate()});
+document.addEventListener('change',e=>{if(e.target.id==='fin-months') updateRate()});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-prefill]'); if(a) prefillNote=a.dataset.prefill});
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='site-form') return;
+  e.preventDefault();const v=id=>document.getElementById(id).value.trim();
+  const o=newOrder({name:v('s-name'),phone:v('s-phone'),bike:v('s-bike'),note:v('s-note'),pickup:v('s-when'),src:'Homepage',chat:[{f:'sys',t:`Anfrage über die Homepage um ${now()}`,at:now()}]});
+  state.sel=o.id;e.target.reset();renderAll();toast(`Anfrage ${o.id} ist in der Werkstatt-App angekommen`);
+});
+
+/* ---------- News & Ratgeber ---------- */
+const NEWS_CATS={'e-bike-technik':'E-Bike-Technik','werkstatt-tipps':'Werkstatt-Tipps','neuheiten':'Neuheiten 2026'};
+const NEWS=[
+  {k:'bosch-update-mehr-drehmoment',cat:'e-bike-technik',date:'2026-11-18',kw:'Bosch Update Drehmoment',
+   title:'Bosch-Update: mehr Drehmoment per App | BikeShop Haar',
+   desc:'Mehr Kraft ohne neuen Motor: Bosch bietet für viele E-Bikes Software-Updates mit mehr Drehmoment. Was das bringt und wie wir es in Haar prüfen.',
+   h1:'Mehr Kraft per Update: Bosch-Motoren bekommen mehr Drehmoment',
+   lead:'Bei vielen E-Bikes mit Bosch-Antrieb lässt sich die Leistung per Software erhöhen. Das Update kommt über die App, ohne neuen Motor.',
+   secs:[['Was das Update verändert','Haibike nennt für den Performance Line PX ein Update auf bis zu 90 Nm, das sich über die eBike-Flow-App einspielen lässt. Für 2026 hat Bosch nachgelegt: Einige Haibike-Modelle sind laut Hersteller für ein Update mit bis zu 120 Nm vorbereitet.'],
+         ['Für wen es sich lohnt','Mehr Drehmoment hilft vor allem am Berg, mit Gepäck oder mit Kinderanhänger. Im Alltag auf ebener Strecke spüren Sie den Unterschied kaum. Der Akku leert sich bei voller Unterstützung schneller.'],
+         ['So prüfen wir Ihr E-Bike','Nicht jedes Modell ist update-fähig. Bei der E-Bike-Inspektion lesen wir den Softwarestand aus, prüfen die verfügbaren Updates und spielen sie auf Wunsch ein.']],
+   links:[['e-bike-service','E-Bike-Service'],['marke-haibike','Haibike in Haar'],['inspektion','E-Bike-Inspektion']],
+   src:[['Haibike: Adventr mit Bosch PX','https://haibike.com/pages/adventr'],['Haibike: Bosch-Update bis 120 Nm','https://haibike.com/de-de/collections/bosch-update-120-nm-bikes']]},
+  {k:'winter-inspektion',cat:'werkstatt-tipps',date:'2026-11-10',kw:'Winter Inspektion Fahrrad',
+   title:'Winter-Inspektion: jetzt das Rad checken | BikeShop Haar',
+   desc:'Warum der Winter der beste Zeitpunkt für die Fahrrad-Inspektion ist: kurze Wartezeit, sicher durch die dunkle Jahreszeit und fertig zum Saisonstart.',
+   h1:'Winter-Inspektion: warum jetzt der beste Zeitpunkt ist',
+   lead:'Im März wollen alle gleichzeitig los, und die Werkstätten sind voll. Wer sein Rad im Winter bringt, wartet kürzer und startet entspannt in die Saison.',
+   secs:[['Kürzere Wartezeit','Von November bis Februar haben wir mehr Zeit für jedes Rad. Die Inspektion ist meist nach wenigen Tagen fertig, im Frühjahr kann es deutlich länger dauern.'],
+         ['Sicher im Dunkeln und bei Nässe','Gerade im Winter zählen funktionierende Bremsen, helles Licht und gute Reifen. Salz und Nässe setzen Kette und Bremsen zu. Ein Check jetzt beugt Schäden vor.'],
+         ['Unsere Checkliste für den Winter','Bremsen und Beläge, Licht vorne und hinten, Reifenprofil und Luftdruck, Kette reinigen und ölen, bei E-Bikes Akku-Zustand und Software.']],
+   links:[['inspektion','Inspektion buchen'],['hol-und-bringservice','Hol- und Bringservice'],['werkstatt','Werkstattpreise']],src:[]},
+  {k:'e-bike-akku-winter',cat:'werkstatt-tipps',date:'2026-11-04',kw:'E-Bike Akku Winter lagern',
+   title:'E-Bike-Akku im Winter richtig lagern | BikeShop Haar',
+   desc:'So hält Ihr E-Bike-Akku länger: Tipps zu Lagerung, Laden und Temperatur in der kalten Jahreszeit. Plus Akku-Check in unserer Werkstatt in Haar.',
+   h1:'E-Bike-Akku im Winter: so bleibt er fit',
+   lead:'Der Akku ist das teuerste Einzelteil am E-Bike. Mit ein paar Handgriffen übersteht er den Winter gut, ob Sie weiterfahren oder pausieren.',
+   secs:[['Wenn Sie im Winter fahren','Laden Sie den Akku in der Wohnung bei Zimmertemperatur und setzen Sie ihn erst kurz vor der Fahrt ein. Kälte senkt die Reichweite spürbar, das ist normal und vorübergehend.'],
+         ['Wenn das Rad pausiert','Lagern Sie den Akku trocken und frostfrei, nur teilweise geladen statt voll oder leer. Prüfen Sie den Ladestand alle paar Monate und laden Sie bei Bedarf nach.'],
+         ['Wann ein Check sinnvoll ist','Wenn die Reichweite deutlich nachlässt oder der Akku ungewöhnlich warm wird. Bei der E-Bike-Inspektion prüfen wir den Zustand.']],
+   links:[['e-bike-service','Akku-Check'],['inspektion','E-Bike-Inspektion']],src:[]},
+  {k:'riemen-statt-kette',cat:'e-bike-technik',date:'2026-10-27',kw:'Riemenantrieb E-Bike',
+   title:'Riemen statt Kette: wartungsarme E-Bikes | BikeShop Haar',
+   desc:'Kein Öl, kein Rost: Immer mehr E-Bikes fahren mit Riemen statt Kette. Vorteile, Grenzen und welche Modelle es in Haar zum Probefahren gibt.',
+   h1:'Riemen statt Kette: der wartungsarme Trend bei E-Bikes',
+   lead:'Immer mehr neue E-Bikes setzen auf einen Riemenantrieb statt einer Kette. Für Pendler und Alltagsfahrer hat das handfeste Vorteile.',
+   secs:[['Die Vorteile','Ein Riemen braucht kein Öl, rostet nicht und macht keine schmutzigen Hosenbeine. Er läuft leise und hält bei richtiger Spannung lange.'],
+         ['Die Grenzen','Riemen funktionieren nur mit Nabenschaltung oder Getriebe und brauchen einen passenden Rahmen. Nachrüsten geht deshalb meist nicht.'],
+         ['Beispiel aus unserem Sortiment','Das Kettler Quadriga PX5 FL 800 kombiniert einen Gates-Riemen mit Shimano-Nexus-Nabenschaltung und Bosch-PX-Motor.']],
+   links:[['marke-kettler','Kettler Quadriga'],['neuraeder-e-bikes','E-Bike-Beratung']],
+   src:[['t-online: Neuer E-Bike-Trend','https://www.t-online.de/mobilitaet/aktuelles/id_101082564/e-bikes-2026-wartungsfreie-modelle-setzen-neue-standards.html'],['bike-discount: Kettler Quadriga PX5 FL 800','https://www.bike-discount.de/en/kettler-quadriga-px5-fl-800-wave-moor-green']]},
+  {k:'winora-yucatan-2026',cat:'neuheiten',date:'2026-10-14',kw:'Winora Yucatan 2026',
+   title:'Neu 2026: Winora Yucatan im Überblick | BikeShop Haar',
+   desc:'Das neue Winora Yucatan: Trekking-E-Bike mit Bosch PX, 600 oder 800 Wh und drei Varianten ab 3.399 Euro. Alle Infos und Probefahrt in Haar.',
+   h1:'Neu 2026: das Winora Yucatan',
+   lead:'Mit dem Yucatan bringt Winora 2026 ein Trekking-E-Bike für Alltag, Radweg und leichtes Gelände. Es gibt drei Varianten.',
+   secs:[['Antrieb und Akku','Alle Modelle fahren mit dem Bosch Performance Line PX mit 85 Nm, per App bis 90 Nm. Je nach Modell gibt es 600 oder 800 Wh.'],
+         ['Die Varianten','Das Yucatan X9 ist der Einstieg für 3.399 Euro, das X10 hat eine UVP von 3.699 Euro. Das Topmodell X12 Pro bringt eine absenkbare Sattelstütze und Vierkolben-Bremsen mit.'],
+         ['Für wen es passt','Für Pendler und Tourenfahrer, die auch Schotter fahren. Alle Modelle gibt es mit tiefem Einstieg und als Diamantrahmen.']],
+   links:[['marke-winora','Winora in Haar'],['finanzierung','Finanzierung']],
+   src:[['web.de: Winora Yucatan','https://web.de/magazine/auto/winora-yucatan-vielseitiges-trekking-bike-alltag-abenteuer-42049594'],['bike-x: Winora Yucatan','https://www.bike-x.de/e-bike/news/winora-yucatan-vielseitiges-trekking-e-bike-fuer-alltag-abenteuer/'],['Bosch: Yucatan X10','https://www.bosch-ebike.com/de/ebikes/winora/yucatan-x10_2977']]},
+  {k:'800-wh-akkus',cat:'neuheiten',date:'2026-09-29',kw:'E-Bike 800 Wh Akku',
+   title:'800-Wh-Akkus: Reichweite für lange Touren | BikeShop Haar',
+   desc:'Große Akkus setzen sich 2026 bei Trekking-E-Bikes durch. Was 800 Wh bringen, was sie wiegen und welche Modelle wir in Haar zeigen.',
+   h1:'800 Wh werden Standard bei Trekking-E-Bikes',
+   lead:'Bei Trekking-E-Bikes geht 2026 der Trend klar zu großen Akkus. Viele Topmodelle haben inzwischen 800 Wh an Bord.',
+   secs:[['Warum größere Akkus','Bei Trekkingrädern steht 2026 der Komfort auf langen Strecken im Vordergrund. Akkus ab 750 Wh sollen Touren ohne Reichweitenangst ermöglichen.'],
+         ['Beispiele 2026','BESV CT-B 1.0, Kettler Quadriga PX5 FL 800, Haibike Trekking 7 und Winora Yucatan X12 Pro haben alle 800 Wh.'],
+         ['Die Kehrseite','Mehr Akku heißt mehr Gewicht. Das BESV CT-B 1.0 wiegt zum Beispiel 30,5 kg. Wer vor allem kurze Wege fährt, ist mit einem kleineren Akku oft besser beraten.']],
+   links:[['marken','Alle Flaggschiffe'],['neuraeder-e-bikes','Kaufberatung']],
+   src:[['linexo: E-Bike-Neuheiten 2026','https://www.linexo.de/index%2Ephp/node/570'],['Notebookcheck: BESV CT-B 1.0','https://www.notebookcheck.net/Low-step-e-bike-launches-with-90-Nm-Bosch-mid-drive-motor-800-Wh-battery-and-high-payload-capacity.1365790.0.html']]}
+];
+const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+const newsCard=n=>`<a class="news-card" href="#news-${n.k}"><span class="news-meta"><span class="cat-pill">${NEWS_CATS[n.cat]}</span><time datetime="${n.date}">${fmtDate(n.date)}</time></span><h3>${n.h1}</h3><p>${n.lead}</p><span class="more">Weiterlesen</span></a>`;
+const newsGrid=list=>`<div class="news-grid">${list.map(newsCard).join('')}</div>`;
+const catChips=active=>`<div class="chips">${L('news','Alle',active?'chip-link':'chip-link on')}${Object.entries(NEWS_CATS).map(([k,t])=>L('news-'+k,t,'chip-link'+(active===k?' on':''))).join('')}</div>`;
+
+const NEWS_PROMPT=`Du bist Redakteur für die Website von {SHOP_NAME}, einem Fahrradladen mit Werkstatt in {ORT}.
+Erstelle {ANZAHL} News-Artikel für {MONAT JAHR}.
+
+Themenmix
+- 1 Saison- oder Werkstatt-Tipp passend zum Monat
+- 1–2 Neuheiten der Marken {MARKEN}, nur mit Quelle
+- 1 Thema E-Bike-Technik (Motor, Akku, Software, Sicherheit)
+- optional 1 lokales Thema, nur aus diesen Angaben des Ladens: {LADEN_INFOS}
+
+Regeln
+- Nur belegbare Fakten. Jede Zahl, jedes Modell, jedes Datum braucht eine Quelle (Hersteller oder Fachmagazin) mit Link.
+- Keine erfundenen Preise, Tests, Zitate, Bewertungen oder Kundenstimmen. Preise nur als „UVP laut Hersteller“ mit Stand.
+- Eigene Worte. Höchstens ein kurzes Zitat unter 15 Wörtern pro Quelle.
+- Deutsch, Sie-Form, freundlich und konkret, Sätze unter 25 Wörtern.
+- {ORT} und Umgebung ({NACHBARORTE}) natürlich erwähnen, kein Keyword-Stopfen.
+- Jeder Artikel verlinkt auf 2–3 passende Seiten des Ladens: {LANDINGPAGES}.
+
+Ausgabe als JSON-Liste, je Artikel:
+{ "slug", "kategorie": "E-Bike-Technik" | "Werkstatt-Tipps" | "Neuheiten",
+  "datum", "fokus_suchbegriff",
+  "seo_titel": max. 60 Zeichen mit Fokus-Suchbegriff,
+  "meta_beschreibung": 120–160 Zeichen,
+  "h1", "teaser": 2 Sätze,
+  "abschnitte": [{ "ueberschrift", "text" }] 3–5 Abschnitte, zusammen 400–700 Wörter,
+  "faq": [{ "frage", "antwort" }] 2–3 Stück,
+  "interne_links": [{ "url", "ankertext" }],
+  "quellen": [{ "titel", "url" }],
+  "pruefhinweise": [Punkte, die der Laden vor der Freigabe prüfen muss] }
+
+Prüfe vor der Ausgabe jede Faktenaussage gegen ihre Quelle und streiche, was du nicht belegen kannst.`;
+
+page('news',{nav:'news',slug:'/news/',kw:'Fahrrad News Haar',crumb:[['news','News']],
+  title:'Fahrrad- und E-Bike-News aus Haar | BikeShop Haar',
+  desc:'Neuheiten 2026, E-Bike-Technik und Werkstatt-Tipps vom BikeShop Haar. Jeden Monat neue Artikel rund um Fahrrad, E-Bike und Pflege.',
+  h1:'News und Ratgeber rund ums Rad',
+  body:p=>`${pageHero(p.h1,'Neuheiten unserer Marken, E-Bike-Technik verständlich erklärt und Tipps aus der Werkstatt. Jeden Monat neu.','News')}
+  <section class="wrap">${catChips('')}${newsGrid(NEWS)}</section>
+  <div class="band demo-band"><section class="wrap">
+    <div class="seo-head"><b>So entsteht die News-Seite</b><span>Nur in der Demo sichtbar</span></div>
+    ${flow([['Themen sammeln','Herstellernews, Saison und Aktionen des Ladens. Einmal im Monat.'],['KI schreibt Entwürfe','Fester Prompt, Quellenpflicht, SEO-Felder und interne Links gleich mit.'],['Laden prüft und gibt frei','Fakten, Preise und Sortiment kurz checken. Ohne Freigabe geht nichts online.'],['Veröffentlichen','Artikel, Kategorie-Seiten, Sitemap und Beitrag im Google-Unternehmensprofil.']])}
+    <h3 class="h3 mt">Der feste Monats-Prompt</h3>
+    <pre class="prompt" id="news-prompt">${NEWS_PROMPT.replace(/</g,'&lt;')}</pre>
+    <button type="button" class="btn btn-ink" id="copy-prompt">Prompt kopieren</button>
+  </section></div>`});
+
+Object.entries(NEWS_CATS).forEach(([k,t])=>page('news-'+k,{nav:'news',slug:`/news/${k}/`,kw:`${t} Fahrrad`,crumb:[['news','News'],['news-'+k,t]],
+  title:`${t}: News und Tipps | BikeShop Haar`,
+  desc:`${t} vom BikeShop Haar: aktuelle Artikel, verständlich erklärt und mit Quellen. Dazu Beratung und Werkstatt-Service in Haar bei München.`,
+  h1:`${t}: News und Ratgeber`,
+  body:p=>`${pageHero(p.h1,`Alle Artikel zum Thema ${t}. Jeder Artikel verlinkt auf die passende Leistung und nennt seine Quellen.`,'News › '+t)}
+  <section class="wrap">${catChips(k)}${newsGrid(NEWS.filter(n=>n.cat===k))}</section>${cta()}`}));
+
+NEWS.forEach(n=>page('news-'+n.k,{nav:'news',slug:`/news/${n.k}/`,kw:n.kw,crumb:[['news','News'],['news-'+n.cat,NEWS_CATS[n.cat]],['news-'+n.k,n.h1.split(':')[0]]],
+  title:n.title,desc:n.desc,h1:n.h1,
+  schemaExtra:{'@type':'NewsArticle',headline:n.h1,datePublished:n.date,author:{'@type':'Organization',name:'BikeShop Haar'},description:n.desc},
+  body:p=>`<div class="page-hero"><div class="wrap ph"><p class="kicker"><span class="cat-pill">${NEWS_CATS[n.cat]}</span> <time datetime="${n.date}">${fmtDate(n.date)}</time></p><h1>${n.h1}</h1><p class="lead-big">${n.lead}</p></div></div>
+  <article class="wrap article">${n.secs.map(([h,t])=>`<h2>${h}</h2><p>${t}</p>`).join('')}
+    <div class="related"><b>Passend dazu</b><div class="chips">${n.links.map(([h,t])=>L(h,t,'chip-link')).join('')}</div></div>
+    ${n.src.length?`<p class="small-note">Quellen: ${n.src.map(([t,u])=>`<a href="${u}">${t}</a>`).join(' · ')}</p>`:''}
+  </article>
+  ${band('Weitere Artikel',newsGrid(NEWS.filter(x=>x!==n).slice(0,3)))}${cta()}`}));
+
+document.addEventListener('click',async e=>{
+  if(e.target.id!=='copy-prompt') return;
+  try{await navigator.clipboard.writeText(NEWS_PROMPT);toast('Prompt kopiert')}catch(err){toast('Kopieren nicht möglich, bitte markieren und kopieren')}
+});
+
+/* ---------- Bewegung: Header-Trail, Parallax, 3D-Kippen, Einblenden ---------- */
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let heroRAF=0, mx=0, my=0, dust=[];
+function stopHero(){cancelAnimationFrame(heroRAF);heroRAF=0}
+function drawHills(){startHero()}
+function startHero(){
+  stopHero();
+  const c=document.getElementById('hills'); if(!c) return;
+  const hero=c.parentElement;
+  const loop=t=>{
+    if(!document.body.contains(c)) return;
+    const dpr=window.devicePixelRatio||1, W=c.clientWidth, H=c.clientHeight;
+    if(c.width!==Math.round(W*dpr)||c.height!==Math.round(H*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}
+    const x=c.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0); scene(x,W,H,REDUCE?3200:t);
+    if(!REDUCE) heroRAF=requestAnimationFrame(loop);
+  };
+  heroRAF=requestAnimationFrame(loop);
+}
+const trailY=(X,W,H)=>H*.86+Math.sin(X*.011+1)*H*.025+Math.sin(X*.0037)*H*.03;
+function scene(x,W,H,t){
+  x.clearRect(0,0,W,H);
+  /* Wolken */
+  x.fillStyle='rgba(255,255,255,.75)';
+  [[.15,.16,1],[.55,.1,.7],[.85,.22,.9]].forEach(([fx,fy,s],i)=>{const cx=((fx*W+t*.012*(i+1))%(W+200))-100-mx*4,cy=fy*H;
+    x.beginPath();x.ellipse(cx,cy,46*s,14*s,0,0,7);x.ellipse(cx+28*s,cy-8*s,30*s,14*s,0,0,7);x.ellipse(cx-26*s,cy-4*s,24*s,11*s,0,0,7);x.fill()});
+  /* Berge hinten (wie im Logo) */
+  const p1=-mx*10;
+  x.fillStyle='#eef7fb';x.beginPath();x.moveTo(W*.36+p1,H*.8);[[.5,.42],[.56,.52],[.66,.26],[.78,.5],[.86,.4],[1.04,.8]].forEach(([a,b])=>x.lineTo(W*a+p1,H*b+my*4));x.closePath();x.fill();
+  x.fillStyle='#cfe3ec';x.beginPath();x.moveTo(W*.66+p1,H*.26+my*4);x.lineTo(W*.78+p1,H*.5+my*4);x.lineTo(W*.7+p1,H*.8);x.closePath();x.fill();
+  /* Hügel Mitte mit Bäumen */
+  const p2=-mx*20;
+  x.fillStyle='#7cc142';x.beginPath();x.moveTo(-40,H);for(let i=0;i<=24;i++){const X=W*i/24;x.lineTo(X+p2,H*(.74+Math.sin(i*.7+.5)*.03))}x.lineTo(W+40,H);x.fill();
+  const hillY=X=>H*(.74+Math.sin((X/W)*24*.7+.5)*.03);
+  [[.05,'laub',1],[.45,'laub',.8],[.55,'tanne',.75],[.93,'tanne',1.05]].forEach(([f,typ,k])=>tree(x,W*f,hillY(W*f)+6,Math.min(H*.2,140)*k,typ));
+  /* Vordergrund und Trail */
+  const p3=-mx*30;
+  x.fillStyle='#5fa82a';x.beginPath();x.moveTo(0,H);for(let X=0;X<=W;X+=16)x.lineTo(X,trailY(X-p3,W,H)-10);x.lineTo(W,H);x.fill();
+  x.strokeStyle='#d9c49a';x.lineWidth=16;x.lineCap='round';x.beginPath();for(let X=-20;X<=W+20;X+=12)x.lineTo(X,trailY(X-p3,W,H));x.stroke();
+  x.strokeStyle='rgba(120,90,40,.25)';x.lineWidth=2;x.setLineDash([6,10]);x.beginPath();for(let X=-20;X<=W+20;X+=12)x.lineTo(X,trailY(X-p3,W,H)+3);x.stroke();x.setLineDash([]);
+  /* Mountainbike fährt durch */
+  const P=11000, prog=(t%P)/P, s=Math.max(.8,Math.min(1.35,W/1000));
+  const bx=-120+(W+240)*prog, by=trailY(bx-p3,W,H), slope=Math.atan2(trailY(bx-p3+10,W,H)-trailY(bx-p3-10,W,H),20);
+  /* Staub */
+  if(!REDUCE&&Math.random()<.5) dust.push({x:bx-26*s,y:by-2,vx:-Math.random()*1.2,vy:-Math.random()*.8,a:.6});
+  dust=dust.filter(d=>(d.a-=.015)>0);dust.forEach(d=>{d.x+=d.vx;d.y+=d.vy;x.fillStyle=`rgba(190,160,110,${d.a})`;x.beginPath();x.arc(d.x,d.y,3,0,7);x.fill()});
+  x.save();x.translate(bx,by);x.rotate(slope);x.scale(s,s);bike(x,bx/(16*s));x.restore();
+}
+function tree(x,X,Y,s,typ){
+  x.fillStyle='#6b4a2b';x.fillRect(X-s*.05,Y-s*.32,s*.1,s*.34);
+  if(typ==='tanne'){
+    [['#24561a',0,.42],['#2f6b1c',.22,.34],['#3a7f22',.42,.26]].forEach(([c,o,w])=>{x.fillStyle=c;x.beginPath();x.moveTo(X,Y-s*(.62+o));x.lineTo(X-s*w,Y-s*(.2+o*.9));x.quadraticCurveTo(X,Y-s*(.14+o*.9),X+s*w,Y-s*(.2+o*.9));x.closePath();x.fill()});
+    x.fillStyle='#3a7f22';x.beginPath();x.moveTo(X,Y-s*1.05);x.lineTo(X-s*.15,Y-s*.78);x.lineTo(X+s*.15,Y-s*.78);x.fill();
+  }else{
+    const b=[[0,-.62,.3,'#2f6b1c'],[-.2,-.5,.22,'#2f6b1c'],[.21,-.5,.22,'#2f6b1c'],[-.08,-.74,.22,'#3d8a24'],[.12,-.68,.2,'#3d8a24'],[-.12,-.58,.16,'#4b9a2c']];
+    b.forEach(([dx,dy,r,c])=>{x.fillStyle=c;x.beginPath();x.arc(X+dx*s,Y+dy*s,r*s,0,7);x.fill()});
+  }
+}
+function bike(x,rot){
+  const r=16, R=[-24,-r], F=[26,-r], B=[-2,-r+3], S=[-10,-r-24], Hd=[18,-r-24];
+  const wheel=(c)=>{x.strokeStyle='#1b1f1b';x.lineWidth=3.5;x.beginPath();x.arc(c[0],c[1],r,0,7);x.stroke();
+    x.lineWidth=1;x.beginPath();for(let i=0;i<4;i++){const a=rot+i*Math.PI/4;x.moveTo(c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r);x.lineTo(c[0]-Math.cos(a)*r,c[1]-Math.sin(a)*r)}x.stroke()};
+  wheel(R);wheel(F);
+  x.strokeStyle='#d42a2f';x.lineWidth=4;x.lineJoin='round';x.lineCap='round';
+  x.beginPath();x.moveTo(B[0],B[1]);x.lineTo(S[0],S[1]);x.lineTo(Hd[0],Hd[1]);x.lineTo(B[0],B[1]);x.lineTo(R[0],R[1]);x.lineTo(S[0],S[1]);x.stroke();
+  x.strokeStyle='#1b1f1b';x.lineWidth=3;x.beginPath();x.moveTo(Hd[0],Hd[1]);x.lineTo(F[0],F[1]);x.moveTo(Hd[0],Hd[1]);x.lineTo(Hd[0]+2,Hd[1]-6);x.lineTo(Hd[0]+8,Hd[1]-6);x.stroke();
+  x.fillStyle='#1b1f1b';x.fillRect(S[0]-7,S[1]-3,12,3);
+  /* Fahrer */
+  const a=rot*1.6, P1=[B[0]+Math.cos(a)*7,B[1]+Math.sin(a)*7], P2=[B[0]-Math.cos(a)*7,B[1]-Math.sin(a)*7];
+  const hip=[S[0]+1,S[1]-4], sh=[8,S[1]-20], hand=[Hd[0]+6,Hd[1]-6];
+  const leg=(p,col)=>{const mxp=(hip[0]+p[0])/2+7, myp=(hip[1]+p[1])/2-3;x.strokeStyle=col;x.lineWidth=4.5;x.beginPath();x.moveTo(hip[0],hip[1]);x.lineTo(mxp,myp);x.lineTo(p[0],p[1]);x.stroke()};
+  leg(P2,'#3b3f3b');
+  x.strokeStyle='#3d7a17';x.lineWidth=7;x.beginPath();x.moveTo(hip[0],hip[1]);x.lineTo(sh[0],sh[1]);x.stroke();
+  x.strokeStyle='#3d7a17';x.lineWidth=3.5;x.beginPath();x.moveTo(sh[0],sh[1]);x.lineTo(hand[0],hand[1]);x.stroke();
+  leg(P1,'#1b1f1b');
+  x.fillStyle='#f2c9a0';x.beginPath();x.arc(sh[0]+6,sh[1]-7,5,0,7);x.fill();
+  x.fillStyle='#d42a2f';x.beginPath();x.arc(sh[0]+6,sh[1]-9,6,Math.PI,0);x.fill();
+}
+
+/* 3D-Kippen von Karten */
+const TILT='.svc,.bike-card,.pkg,.news-card,.brand-row';
+if(!REDUCE && matchMedia('(pointer:fine)').matches){
+  document.addEventListener('pointermove',e=>{
+    const el=e.target.closest(TILT); document.querySelectorAll('.tilting').forEach(o=>{if(o!==el){o.classList.remove('tilting');o.style.transform=''}});
+    if(!el) return; const r=el.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+    el.classList.add('tilting'); el.style.transform=`perspective(900px) rotateX(${(-py*6).toFixed(2)}deg) rotateY(${(px*8).toFixed(2)}deg) translateY(-4px)`;
+  });
+}
+/* Sanftes Einblenden beim Scrollen (Ausgangszustand bleibt sichtbar) */
+const io='IntersectionObserver' in window && !REDUCE ? new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{rootMargin:'0px 0px -40px 0px'}) : null;
+function observeReveal(){ if(!io) return; document.querySelectorAll('#site-main .grid3>*,#site-main .grid2>*,#site-main .bike-grid>*,#site-main .news-grid>*,#site-main .flow>div,#site-main .brand-row').forEach((el,i)=>{el.classList.add('rv');el.style.setProperty('--d',(i%6)*60+'ms');io.observe(el)}) }
+/* Sticky-Navigation unter der Demo-Leiste */
+function setBarH(){document.documentElement.style.setProperty('--dbh',document.querySelector('.demobar').offsetHeight+'px')}
+window.addEventListener('resize',setBarH);
+
+setBarH(); renderAll(); route();
+</script>
+</body>
+</html>
